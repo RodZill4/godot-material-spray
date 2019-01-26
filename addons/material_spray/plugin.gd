@@ -52,19 +52,19 @@ func paint():
 func free_paint_tool():
 	paint_tool.queue_free()
 	paint_tool = null
-	
+
 func assign_material(m):
 	var texture
 	var editor_file_system = get_editor_interface().get_resource_filesystem()
 	editor_file_system.scan()
 	editor_file_system.update_file(m.albedo)
+	editor_file_system.update_file(m.mr)
+	editor_file_system.update_file(m.nm)
 	texture = load(m.albedo)
 	m.material.albedo_texture = texture
-	editor_file_system.update_file(m.mr)
 	texture = load(m.mr)
 	m.material.metallic_texture = texture
 	m.material.roughness_texture = texture
-	editor_file_system.update_file(m.nm)
 	texture = load(m.nm)
 	m.material.normal_texture = texture
 	edited_object.set_surface_material(0, m.material)

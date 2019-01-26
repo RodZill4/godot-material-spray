@@ -14,7 +14,7 @@
    viewBox="0 0 744.09448819 1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
    sodipodi:docname="icons.svg">
   <defs
      id="defs4" />
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="-1174.504"
-     inkscape:cy="21.101772"
+     inkscape:zoom="0.175"
+     inkscape:cx="-418.88637"
+     inkscape:cy="360.71849"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -44,7 +44,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -55,8 +55,8 @@
     <g
        id="g4171"
        inkscape:export-filename="paint.png"
-       inkscape:export-xdpi="10.23"
-       inkscape:export-ydpi="10.23">
+       inkscape:export-xdpi="5.1167521"
+       inkscape:export-ydpi="5.1167521">
       <rect
          ry="80"
          y="-107.63779"
@@ -101,8 +101,8 @@
     <g
        id="g4179"
        inkscape:export-filename="line.png"
-       inkscape:export-xdpi="10.23"
-       inkscape:export-ydpi="10.23">
+       inkscape:export-xdpi="5.1167512"
+       inkscape:export-ydpi="5.1167512">
       <rect
          style="opacity:0.98999999;fill:#787878;fill-opacity:1;stroke:none;stroke-width:3.9000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.78025477"
          id="rect4151"
@@ -129,8 +129,8 @@
     <g
        id="g4184"
        inkscape:export-filename="line_strip.png"
-       inkscape:export-xdpi="10.23"
-       inkscape:export-ydpi="10.23">
+       inkscape:export-xdpi="5.1167517"
+       inkscape:export-ydpi="5.1167517">
       <g
          id="g4189">
         <rect
@@ -160,8 +160,8 @@
     <g
        id="g4282"
        inkscape:export-filename="paint_s.png"
-       inkscape:export-xdpi="10"
-       inkscape:export-ydpi="10">
+       inkscape:export-xdpi="5.1167517"
+       inkscape:export-ydpi="5.1167517">
       <rect
          style="opacity:0.98999999;fill:#d8d8d8;fill-opacity:1;stroke:#b3b3b3;stroke-width:3.9000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          id="rect4196"
@@ -206,8 +206,8 @@
     <g
        id="g4277"
        inkscape:export-filename="line_s.png"
-       inkscape:export-xdpi="10"
-       inkscape:export-ydpi="10">
+       inkscape:export-xdpi="5.1167517"
+       inkscape:export-ydpi="5.1167517">
       <rect
          ry="80"
          y="505.49509"
@@ -237,8 +237,8 @@
     <g
        id="g4271"
        inkscape:export-filename="line_strip_s.png"
-       inkscape:export-xdpi="10"
-       inkscape:export-ydpi="10">
+       inkscape:export-xdpi="5.1167517"
+       inkscape:export-ydpi="5.1167517">
       <g
          transform="translate(785.71429,-31.428571)"
          id="g4218">
