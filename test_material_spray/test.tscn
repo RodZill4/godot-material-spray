@@ -17,10 +17,8 @@ metallic = 1.0
 [sub_resource type="SpatialMaterial" id=3]
 
 albedo_texture = ExtResource( 2 )
-metallic = 1.0
 metallic_texture = ExtResource( 3 )
 roughness_texture = ExtResource( 3 )
-roughness_texture_channel = 1
 
 [sub_resource type="PrismMesh" id=4]
 

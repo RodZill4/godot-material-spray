@@ -2,25 +2,25 @@ tool
 extends EditorPlugin
 
 var edited_object = null
-var pt_button = null
+var paint_button = null
 var paint_tool = null
 
 func _exit_tree():
-	if pt_button != null:
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, pt_button)
-		pt_button.queue_free()
-		pt_button = null
+	if paint_button != null:
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, paint_button)
+		paint_button.queue_free()
+		paint_button = null
 	if paint_tool != null:
 		paint_tool.hide()
 		paint_tool.queue_free()
 		paint_tool = null
 
 func _get_state():
-	var s = { pt_button=pt_button, paint_tool=paint_tool, edited_object=edited_object }
+	var s = { paint_button=paint_button, paint_tool=paint_tool, edited_object=edited_object }
 	return s
 
 func _set_state(s):
-	pt_button = s.pt_button
+	paint_button = s.paint_button
 	paint_tool = s.paint_tool
 	edited_object = s.edited_object
 
@@ -32,14 +32,14 @@ func edit(object):
 
 func make_visible(b):
 	if b:
-		pt_button = preload("res://addons/material_spray/pt_button.tscn").instance()
-		pt_button.connect("pressed", self, "paint")
-		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, pt_button)
+		paint_button = preload("res://addons/material_spray/paint_button.tscn").instance()
+		paint_button.connect("pressed", self, "paint")
+		add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, paint_button)
 	else:
 		edited_object = null
-		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, pt_button)
-		pt_button.free()
-		pt_button = null
+		remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU, paint_button)
+		paint_button.free()
+		paint_button = null
 
 func paint():
 	paint_tool = preload("res://addons/material_spray/paint_window.tscn").instance()

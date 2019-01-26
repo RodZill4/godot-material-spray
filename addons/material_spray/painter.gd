@@ -43,8 +43,8 @@ func _ready():
 	albedo_viewport.get_texture().flags |= Texture.FLAG_FILTER | Texture.FLAG_ANISOTROPIC_FILTER
 	mr_viewport.get_texture().flags |= Texture.FLAG_FILTER | Texture.FLAG_ANISOTROPIC_FILTER
 
-func set_mesh(m):
-	var mat
+func set_mesh(m : Mesh):
+	var mat : Material
 	mat = texture_to_view_mesh.get_surface_material(0)
 	texture_to_view_mesh.mesh = m
 	texture_to_view_mesh.set_surface_material(0, mat)
@@ -55,7 +55,36 @@ func set_mesh(m):
 	view_to_texture_mesh.mesh = m
 	view_to_texture_mesh.set_surface_material(0, mat)
 
-func set_texture_size(s):
+func calculate_mask(value : float, channel : int) -> Color:
+	if (channel == SpatialMaterial.TEXTURE_CHANNEL_RED):
+		return Color(value, 0, 0, 0)
+	elif (channel == SpatialMaterial.TEXTURE_CHANNEL_GREEN):
+		return Color(0, value, 0, 0)
+	elif (channel == SpatialMaterial.TEXTURE_CHANNEL_BLUE):
+		return Color(0, 0, value, 0)
+	elif (channel == SpatialMaterial.TEXTURE_CHANNEL_ALPHA):
+		return Color(0, 0, 0, value)
+	return Color(0, 0, 0, 0)
+
+func init_textures(m : SpatialMaterial):
+	albedo_initrect.show()
+	albedo_initrect.material.set_shader_param("col", m.albedo_color)
+	albedo_initrect.material.set_shader_param("tex", m.albedo_texture)
+	albedo_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	albedo_viewport.update_worlds()
+	mr_initrect.show()
+	mr_initrect.material.set_shader_param("metallic", m.metallic_texture)
+	mr_initrect.material.set_shader_param("metallic_mask", calculate_mask(m.metallic, m.metallic_texture_channel))
+	mr_initrect.material.set_shader_param("roughness", m.roughness_texture)
+	mr_initrect.material.set_shader_param("roughness_mask", calculate_mask(m.roughness, m.roughness_texture_channel))
+	mr_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	mr_viewport.update_worlds()
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
+	albedo_initrect.hide()
+	mr_initrect.hide()
+
+func set_texture_size(s : float):
 	texture_to_view_viewport.size = Vector2(s, s)
 	texture_to_view_lsb_viewport.size = Vector2(s, s)
 	albedo_viewport.size = Vector2(s, s)
@@ -97,13 +126,12 @@ func update_tex2view():
 	texture_to_view_lsb_viewport.render_target_update_mode = Viewport.UPDATE_DISABLED
 
 func material_changed(new_material):
-	print(new_material)
 	current_material = new_material
 	albedo_material.set_shader_param("brush_color", current_material.albedo_color)
 	var alpha = current_material.albedo_color.a
 	albedo_material.set_shader_param("brush_channelmask", Color(alpha, alpha, alpha))
 	mr_material.set_shader_param("brush_color", Color(current_material.metallic, current_material.roughness, 0.0))
-	mr_material.set_shader_param("brush_channelmask", Color(1.0 if current_material.has_metallic else 0.0, 1.0 if current_material.has_roughness else 0.0, 0.0))
+	mr_material.set_shader_param("brush_channelmask", Color(1.0 if current_material.has_metallic else 0.0, 1.0 if current_material.has_roughness else 0.0, 1.0))
 
 func do_paint(position, prev_position):
 	if current_material.has_albedo:

@@ -1,12 +1,13 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/material_spray/painter.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/shaders/view2texture.shader" type="Shader" id=2]
 [ext_resource path="res://addons/material_spray/shaders/texture2view.shader" type="Shader" id=3]
 [ext_resource path="res://addons/material_spray/shaders/texture2view_lsb.shader" type="Shader" id=4]
 [ext_resource path="res://addons/material_spray/shaders/paint.shader" type="Shader" id=5]
-
-
+[ext_resource path="res://addons/material_spray/shaders/init_albedo.shader" type="Shader" id=6]
+[ext_resource path="res://Suzanne_albedo.png" type="Texture" id=7]
+[ext_resource path="res://addons/material_spray/shaders/init_mr.shader" type="Shader" id=8]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -48,8 +49,8 @@ shader_param/view2texture = SubResource( 3 )
 [sub_resource type="ShaderMaterial" id=8]
 
 shader = ExtResource( 5 )
-shader_param/brush_pos = Vector2( 0.516836, 0.0124827 )
-shader_param/brush_ppos = Vector2( 0.302271, 0.757282 )
+shader_param/brush_pos = Vector2( 0.52545, 0.624133 )
+shader_param/brush_ppos = Vector2( 0.52545, 0.624133 )
 shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
 shader_param/brush_strength = 0.5
 shader_param/brush_color = Color( 0, 0, 0, 1 )
@@ -59,15 +60,27 @@ shader_param/tex2viewlsb_tex = SubResource( 7 )
 
 [sub_resource type="ShaderMaterial" id=9]
 
+shader = ExtResource( 6 )
+shader_param/col = Color( 1, 1, 1, 1 )
+shader_param/tex = ExtResource( 7 )
+
+[sub_resource type="ShaderMaterial" id=10]
+
 shader = ExtResource( 5 )
-shader_param/brush_pos = Vector2( 0.480814, 0.424411 )
-shader_param/brush_ppos = Vector2( 0.480814, 0.424411 )
+shader_param/brush_pos = Vector2( 0.487862, -0.0901526 )
+shader_param/brush_ppos = Vector2( 0.487862, -0.0901526 )
 shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
 shader_param/brush_strength = 0.5
-shader_param/brush_color = Color( 1, 1, 0, 1 )
-shader_param/brush_channelmask = Color( 1, 1, 0, 1 )
+shader_param/brush_color = Color( 0, 0, 0, 1 )
+shader_param/brush_channelmask = Color( 0, 0, 1, 1 )
 shader_param/tex2view_tex = SubResource( 6 )
 shader_param/tex2viewlsb_tex = SubResource( 7 )
+
+[sub_resource type="ShaderMaterial" id=11]
+
+shader = ExtResource( 8 )
+shader_param/metallic_mask = Plane( 1, 0, 0, 0 )
+shader_param/roughness_mask = Plane( 0, 1, 0, 0 )
 
 [node name="Painter" type="Node"]
 script = ExtResource( 1 )
@@ -132,10 +145,8 @@ mesh = SubResource( 1 )
 material/0 = SubResource( 5 )
 
 [node name="AlbedoPaint" type="Node" parent="."]
-editor/display_folded = true
 
 [node name="Viewport" type="Viewport" parent="AlbedoPaint"]
-editor/display_folded = true
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
@@ -152,14 +163,13 @@ margin_bottom = 2048.0
 
 [node name="InitRect" type="ColorRect" parent="AlbedoPaint/Viewport"]
 visible = false
+material = SubResource( 9 )
 margin_right = 2048.0
 margin_bottom = 2048.0
 
 [node name="MRPaint" type="Node" parent="."]
-editor/display_folded = true
 
 [node name="Viewport" type="Viewport" parent="MRPaint"]
-editor/display_folded = true
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
@@ -170,13 +180,14 @@ render_target_clear_mode = 1
 render_target_update_mode = 1
 
 [node name="PaintRect" type="ColorRect" parent="MRPaint/Viewport"]
-material = SubResource( 9 )
+material = SubResource( 10 )
 margin_right = 2048.0
 margin_bottom = 2048.0
 rect_min_size = Vector2( 1024, 1024 )
 
 [node name="InitRect" type="ColorRect" parent="MRPaint/Viewport"]
 visible = false
+material = SubResource( 11 )
 margin_right = 2048.0
 margin_bottom = 2048.0
 

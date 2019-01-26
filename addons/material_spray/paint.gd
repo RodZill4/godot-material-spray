@@ -46,9 +46,7 @@ signal update_material
 
 func _ready():
 	# Assign all textures to painted mesh
-	$MainView/PaintedMesh.get_surface_material(0).albedo_texture = painter.get_albedo_texture()
-	$MainView/PaintedMesh.get_surface_material(0).metallic_texture = painter.get_mr_texture()
-	$MainView/PaintedMesh.get_surface_material(0).roughness_texture = painter.get_mr_texture()
+	$MainView/PaintedMesh.set_surface_material(0, SpatialMaterial.new())
 	# Updated Texture2View wrt current camera position
 	update_view()
 	# Set size of painted textures
@@ -58,15 +56,21 @@ func _ready():
 	# Disable physics process so we avoid useless updates of tex2view textures
 	set_physics_process(false)
 
-func set_mesh(n, m):
-	object_name = n
+func set_object(o):
+	object_name = o.name
 	var mat = $MainView/PaintedMesh.get_surface_material(0)
-	$MainView/PaintedMesh.mesh = m
+	mat.albedo_texture = painter.get_albedo_texture()
+	mat.metallic = 1.0
+	mat.metallic_texture = painter.get_mr_texture()
+	mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
+	mat.roughness = 1.0
+	mat.roughness_texture = painter.get_mr_texture()
+	mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
+	$MainView/PaintedMesh.mesh = o.mesh
 	$MainView/PaintedMesh.set_surface_material(0, mat)
-	painter.set_mesh(m)
+	painter.set_mesh(o.mesh)
 	update_view()
-	clear_textures()
-	save()
+	painter.init_textures(o.get_surface_material(0))
 
 func set_texture_size(s):
 	painter.set_texture_size(s)
@@ -74,9 +78,9 @@ func set_texture_size(s):
 func set_mode(m):
 	mode = m
 	if mode == MODE_TEXTURE:
-		$Texture.show()
+		$Brush/Texture.show()
 	else:
-		$Texture.hide()
+		$Brush/Texture.hide()
 
 func set_current_tool(m):
 	current_tool = m
@@ -178,18 +182,6 @@ func update_brush_parameters():
 	if mr_material != null:
 		mr_material.set_shader_param("brush_size", brush_size_vector)
 		mr_material.set_shader_param("brush_strength", brush_strength)
-
-func clear_textures():
-	albedo_initrect.show()
-	mr_initrect.show()
-	albedo_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-	albedo_viewport.update_worlds()
-	mr_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-	mr_viewport.update_worlds()
-	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
-	albedo_initrect.hide()
-	mr_initrect.hide()
 
 func paint(p):
 	if painting:

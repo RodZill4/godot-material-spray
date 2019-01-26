@@ -90,3 +90,4 @@ ticks_on_borders = true
 [connection signal="pressed" from="Metallic" to="." method="_on_Checkbox_pressed"]
 [connection signal="value_changed" from="MetallicValue" to="." method="_on_HSlider_value_changed"]
 [connection signal="pressed" from="Roughness" to="." method="_on_Checkbox_pressed"]
+[connection signal="value_changed" from="RoughnessValue" to="." method="_on_HSlider_value_changed"]

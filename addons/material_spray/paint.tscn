@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/material_spray/paint.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/environments/park.hdr" type="Texture" id=2]
@@ -29,28 +29,15 @@ environment = SubResource( 2 )
 
 size = Vector3( 1, 1, 1 )
 
-[sub_resource type="ViewportTexture" id=11]
+[sub_resource type="SpatialMaterial" id=11]
 
-flags = 12
-
-[sub_resource type="ViewportTexture" id=12]
-
-flags = 12
-
-[sub_resource type="SpatialMaterial" id=7]
-
-albedo_texture = SubResource( 11 )
-metallic = 1.0
-metallic_texture = SubResource( 12 )
-roughness_texture = SubResource( 12 )
-roughness_texture_channel = 1
 
 [sub_resource type="ShaderMaterial" id=8]
 
 shader = ExtResource( 3 )
-shader_param/brush_pos = Vector2( 0.988254, 0 )
-shader_param/brush_ppos = Vector2( 0.988254, 0 )
-shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_pos = Vector2( 0.985904, 0.00138696 )
+shader_param/brush_ppos = Vector2( 0.985904, 0.00138696 )
+shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
 shader_param/brush_strength = 0.5
 
 [sub_resource type="Shader" id=9]
@@ -67,7 +54,6 @@ stretch = true
 script = ExtResource( 1 )
 
 [node name="MainView" type="Viewport" parent="."]
-editor/display_folded = true
 size = Vector2( 1024, 600 )
 world = SubResource( 3 )
 handle_input_locally = false
@@ -86,7 +72,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.04372, 0, 1.98915 )
 
 [node name="PaintedMesh" type="MeshInstance" parent="MainView"]
 mesh = SubResource( 4 )
-material/0 = SubResource( 7 )
+material/0 = SubResource( 11 )
 
 [node name="Brush" type="Control" parent="."]
 anchor_right = 1.0
@@ -110,6 +96,7 @@ mouse_filter = 2
 [node name="Painter" parent="." instance=ExtResource( 4 )]
 
 [node name="Tools" type="HBoxContainer" parent="."]
+editor/display_folded = true
 margin_right = 149.0
 margin_bottom = 32.0
 
