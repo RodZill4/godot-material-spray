@@ -43,14 +43,10 @@ void vertex() {
 	COLOR=vec4(1.0);
 }
 
-vec2 fix_unshaded(vec2 xy) {
-	return pow(xy, vec2(2.22222222222));
-}
-
 void fragment() {
 	vec4 color = get_projection_matrix()*vec4(global_position.xyz, 1.0);
 	color.xyz /= color.w;
 	vec3 xyz = vec3(0.5-0.5*color.x, 0.5+0.5*color.y, -0.5*color.z);
 	xyz.xy = fract(xyz.xy*255.0);
-	ALBEDO = vec3(fix_unshaded(xyz.xy), 0.0);
+	ALBEDO = vec3(pow(xyz.xy, vec2(2.22)), 0.0);
 }

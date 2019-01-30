@@ -1,16 +1,15 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://addons/material_spray/paint.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/environments/park.hdr" type="Texture" id=2]
-[ext_resource path="res://addons/material_spray/shaders/showbrush.shader" type="Shader" id=3]
-[ext_resource path="res://addons/material_spray/painter.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/material_spray/painter.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/material_spray/brush.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/material_spray/icons/paint.png" type="Texture" id=5]
 [ext_resource path="res://addons/material_spray/icons/paint_s.png" type="Texture" id=6]
 [ext_resource path="res://addons/material_spray/icons/line.png" type="Texture" id=7]
 [ext_resource path="res://addons/material_spray/icons/line_s.png" type="Texture" id=8]
 [ext_resource path="res://addons/material_spray/icons/line_strip.png" type="Texture" id=9]
 [ext_resource path="res://addons/material_spray/icons/line_strip_s.png" type="Texture" id=10]
-[ext_resource path="res://addons/material_spray/material.tscn" type="PackedScene" id=11]
 
 [sub_resource type="PanoramaSky" id=1]
 
@@ -29,23 +28,8 @@ environment = SubResource( 2 )
 
 size = Vector3( 1, 1, 1 )
 
-[sub_resource type="SpatialMaterial" id=11]
+[sub_resource type="SpatialMaterial" id=5]
 
-
-[sub_resource type="ShaderMaterial" id=8]
-
-shader = ExtResource( 3 )
-shader_param/brush_pos = Vector2( 0.985904, 0.00138696 )
-shader_param/brush_ppos = Vector2( 0.985904, 0.00138696 )
-shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
-shader_param/brush_strength = 0.5
-
-[sub_resource type="Shader" id=9]
-
-
-[sub_resource type="ShaderMaterial" id=10]
-
-shader = SubResource( 9 )
 
 [node name="MaterialSpray" type="ViewportContainer"]
 anchor_right = 1.0
@@ -60,7 +44,6 @@ handle_input_locally = false
 render_target_update_mode = 3
 
 [node name="CameraStand" type="Spatial" parent="MainView"]
-editor/display_folded = true
 
 [node name="Camera" type="Camera" parent="MainView/CameraStand"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
@@ -72,28 +55,11 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.04372, 0, 1.98915 )
 
 [node name="PaintedMesh" type="MeshInstance" parent="MainView"]
 mesh = SubResource( 4 )
-material/0 = SubResource( 11 )
+material/0 = SubResource( 5 )
 
-[node name="Brush" type="Control" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
+[node name="Painter" parent="." instance=ExtResource( 3 )]
 
-[node name="Brush" type="ColorRect" parent="Brush"]
-material = SubResource( 8 )
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Texture" type="ColorRect" parent="Brush"]
-visible = false
-self_modulate = Color( 1, 1, 1, 0.502745 )
-material = SubResource( 10 )
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Painter" parent="." instance=ExtResource( 4 )]
+[node name="Brush" parent="." instance=ExtResource( 4 )]
 
 [node name="Tools" type="HBoxContainer" parent="."]
 editor/display_folded = true
@@ -106,6 +72,7 @@ margin_bottom = 32.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 toggle_mode = true
+pressed = true
 texture_normal = ExtResource( 5 )
 texture_pressed = ExtResource( 6 )
 
@@ -133,16 +100,16 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "Save"
 
-[node name="Material" parent="." instance=ExtResource( 11 )]
-
 [node name="Debug" type="Control" parent="."]
+editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -600.0
 margin_right = 1024.0
 mouse_filter = 2
 
-[node name="Texture" type="TextureRect" parent="Debug"]
+[node name="Texture1" type="TextureRect" parent="Debug"]
+visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -512.0
@@ -150,7 +117,16 @@ margin_right = 512.0
 rect_min_size = Vector2( 512, 512 )
 expand = true
 
-[node name="Select" type="OptionButton" parent="Debug"]
+[node name="Texture2" type="TextureRect" parent="Debug"]
+visible = false
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -512.0
+margin_right = 512.0
+rect_min_size = Vector2( 512, 512 )
+expand = true
+
+[node name="Select1" type="OptionButton" parent="Debug"]
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -20.0
@@ -160,11 +136,24 @@ text = "None"
 items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null ]
 selected = 0
 
-[connection signal="gui_input" from="." to="." method="_on_Test_gui_input"]
+[node name="Select2" type="OptionButton" parent="Debug"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 0.385536
+margin_top = -42.0281
+margin_right = 75.3855
+margin_bottom = -22.0281
+size_flags_horizontal = 0
+text = "None"
+items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null ]
+selected = 0
+
+[connection signal="gui_input" from="." to="." method="_on_MaterialSpray_gui_input"]
 [connection signal="resized" from="." to="." method="_on_resized"]
+[connection signal="material_changed" from="Brush" to="Painter" method="material_changed"]
 [connection signal="pressed" from="Tools/Free" to="." method="set_current_tool" binds= [ 2 ]]
 [connection signal="pressed" from="Tools/Line" to="." method="set_current_tool" binds= [ 3 ]]
 [connection signal="pressed" from="Tools/Strip" to="." method="set_current_tool" binds= [ 4 ]]
 [connection signal="pressed" from="Tools/Save" to="." method="save"]
-[connection signal="material_changed" from="Material" to="Painter" method="material_changed"]
-[connection signal="item_selected" from="Debug/Select" to="." method="_on_DebugSelect_item_selected"]
+[connection signal="item_selected" from="Debug/Select1" to="." method="_on_DebugSelect_item_selected" binds= [ 0 ]]
+[connection signal="item_selected" from="Debug/Select2" to="." method="_on_DebugSelect_item_selected" binds= [ 1 ]]

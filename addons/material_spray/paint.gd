@@ -11,11 +11,6 @@ const MODE_LINE_STRIP = 4
 var current_tool = MODE_FREE
 var mode         = MODE_FREE
 
-var brush_size     = 50.0
-var brush_strength = 0.5
-var texture_albedo = preload("res://icon.png")
-var texture_mr     = null
-var texture_normal = null
 var texture_scale = 2.0
 
 var previous_position = null
@@ -28,16 +23,7 @@ var object_name = null
 
 onready var painter = $Painter
 
-onready var albedo_viewport = $Painter/AlbedoPaint/Viewport
-onready var albedo_initrect = $Painter/AlbedoPaint/Viewport/InitRect
-onready var albedo_paintrect = $Painter/AlbedoPaint/Viewport/PaintRect
-onready var albedo_material = albedo_paintrect.get_material()
-
-onready var mr_viewport = $Painter/MRPaint/Viewport
-onready var mr_initrect = $Painter/MRPaint/Viewport/InitRect
-onready var mr_paintrect = $Painter/MRPaint/Viewport/PaintRect
-onready var mr_material = $Painter/MRPaint/Viewport/PaintRect.get_material()
-
+onready var brush = $Brush
 onready var brush_material = $Brush/Brush.get_material()
 
 const MATERIAL_OPTIONS = [ "none", "bricks", "metal_pattern", "rusted_metal", "wooden_floor" ]
@@ -51,10 +37,9 @@ func _ready():
 	update_view()
 	# Set size of painted textures
 	set_texture_size(2048)
-	# Initialize brush related parameters in paint shaders
-	update_brush_parameters()
 	# Disable physics process so we avoid useless updates of tex2view textures
 	set_physics_process(false)
+	set_current_tool(2)
 
 func set_object(o):
 	object_name = o.name
@@ -115,7 +100,7 @@ func _input(ev):
 				key_rotate.x += 1.0
 			set_physics_process(key_rotate != Vector2(0.0, 0.0))
 
-func _on_Test_gui_input(ev):
+func _on_MaterialSpray_gui_input(ev):
 	if ev is InputEventMouseMotion:
 		show_brush(ev.position, previous_position)
 		if ev.button_mask & BUTTON_MASK_RIGHT != 0:
@@ -128,11 +113,7 @@ func _on_Test_gui_input(ev):
 				texture_scale = clamp(texture_scale, 0.01, 20.0)
 			elif ev.shift:
 				previous_position = null
-				brush_size += ev.relative.x*0.1
-				brush_size = clamp(brush_size, 0.0, 250.0)
-				brush_strength += ev.relative.y*0.01
-				brush_strength = clamp(brush_strength, 0.0, 0.999)
-				update_brush_parameters()
+				brush.change_size(ev.relative)
 			elif current_tool == MODE_FREE:
 				paint(ev.position)
 		elif current_tool != MODE_LINE_STRIP:
@@ -171,18 +152,6 @@ func show_brush(p, op = null):
 	brush_material.set_shader_param("brush_pos", position)
 	brush_material.set_shader_param("brush_ppos", old_position)
 
-func update_brush_parameters():
-	var brush_size_vector = Vector2(brush_size, brush_size)/rect_size
-	if brush_material != null:
-		brush_material.set_shader_param("brush_size", Vector2(brush_size, brush_size)/rect_size)
-		brush_material.set_shader_param("brush_strength", brush_strength)
-	if albedo_material != null:
-		albedo_material.set_shader_param("brush_size", brush_size_vector)
-		albedo_material.set_shader_param("brush_strength", brush_strength)
-	if mr_material != null:
-		mr_material.set_shader_param("brush_size", brush_size_vector)
-		mr_material.set_shader_param("brush_strength", brush_strength)
-
 func paint(p):
 	if painting:
 		# if not available for painting, record a paint order
@@ -207,7 +176,8 @@ func paint(p):
 func update_view():
 	var camera = $MainView/CameraStand/Camera
 	var transform = camera.global_transform.affine_inverse()*$MainView/PaintedMesh.global_transform
-	painter.update_view(camera, transform, $MainView.size)
+	if painter != null:
+		painter.update_view(camera, transform, $MainView.size)
 
 func load_material():
 	var dialog = FileDialog.new()
@@ -223,7 +193,7 @@ func do_load_material(filename):
 	pass
 
 func _on_resized():
-	update_brush_parameters()
+	update_view()
 
 func dump_texture(texture, filename):
 	var image = texture.get_data()
@@ -235,6 +205,9 @@ func save():
 	dump_texture(painter.get_mr_texture(), object_name+"_mr.png")
 	emit_signal("update_material", { material=mat, albedo=object_name+"_albedo.png", mr=object_name+"_mr.png", nm=object_name+"_nm.png" })
 
-func _on_DebugSelect_item_selected(ID):
-	$Debug/Texture.visible = (ID != 0)
-	$Debug/Texture.texture = $Painter.debug_get_texture(ID)
+func _on_DebugSelect_item_selected(ID, t):
+	var texture = [$Debug/Texture1, $Debug/Texture2][t]
+	texture.visible = (ID != 0)
+	texture.texture = $Painter.debug_get_texture(ID)
+
+

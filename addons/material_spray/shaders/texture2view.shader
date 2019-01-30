@@ -43,20 +43,26 @@ void vertex() {
 	COLOR=vec4(1.0);
 }
 
-vec2 fix_unshaded(vec2 xy) {
-	return pow(xy, vec2(2.22222222222));
+float visibility(vec2 uv, vec3 view_pos) {
+	vec2 uv_delta = textureLod(view2texture, view_pos.xy, 0.0).xy-uv;
+	return step(dot(uv_delta, uv_delta), 0.002);
+	/*
+	vec3 depth_delta = textureLod(view2texture, view_pos.xy, 0.0).xyz-vec3(cos(view_pos.z), sin(view_pos.z*7.0), sin(view_pos.z/7.0));
+	return step(dot(depth_delta, depth_delta), 0.1);
+	*/
 }
 
 void fragment() {
-	vec4 color = get_projection_matrix()*vec4(global_position.xyz, 1.0);
-	color.xyz /= color.w;
-	vec3 xyz = vec3(0.5-0.5*color.x, 0.5+0.5*color.y, -0.5*color.z);
-	vec4 v2t = textureLod(view2texture, xyz.xy, 0.0);
-	xyz.xy = floor(xyz.xy*255.0)/255.0;
-	vec2 delta = v2t.xy-UV.xy;
+	vec4 position = get_projection_matrix()*vec4(global_position.xyz, 1.0);
+	position.xyz /= position.w;
+	vec3 xyz = vec3(0.5-0.5*position.x, 0.5+0.5*position.y, z_near + (z_far - z_near)*position.z);
+	vec2 rounded_xyz = floor(xyz.xy*255.0)/255.0;
 	float visible = 0.0;
-	if (color.x > -1.0 && color.x < 1.0 && color.y > -1.0 && color.y < 1.0) {
-		visible = clamp(100.0*dot(normalize(normal), normalize(color.xyz)), 0.0, 1.0)*max(0.0, 1.0-4.0*pow(dot(delta, delta), 2.0));
+	if (position.x > -1.0 && position.x < 1.0 && position.y > -1.0 && position.y < 1.0) {
+		float visibility_multiplier = max(visibility(UV.xy, xyz), max(max(visibility(UV.xy, xyz+vec3(0.001, 0.0, 0.0)), visibility(UV.xy, xyz+vec3(-0.0001, 0.0, 0.0))),  max(visibility(UV.xy, xyz+vec3(0.0, 0.001, 0.0)), visibility(UV.xy, xyz+vec3(0.0, -0.0001, 0.0)))));
+		//float visibility_multiplier = visibility(UV.xy, xyz);
+		float normal_multiplier = clamp(5.0*dot(normalize(normal), normalize(position.xyz)), 0.0, 1.0);
+		visible = normal_multiplier*visibility_multiplier;
 	}
-	ALBEDO = vec3(fix_unshaded(xyz.xy), visible);
+	ALBEDO = vec3(pow(rounded_xyz, vec2(2.22)), visible);
 }
