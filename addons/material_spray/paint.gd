@@ -1,15 +1,11 @@
 tool
 extends ViewportContainer
 
-const MODE_BRUSH      = 0
-const MODE_TEXTURE    = 1
-const MODE_FIRST_TOOL = 2
-const MODE_FREE       = 2
-const MODE_LINE       = 3
-const MODE_LINE_STRIP = 4
+const MODE_FREE       = 0
+const MODE_LINE       = 1
+const MODE_LINE_STRIP = 2
 
 var current_tool = MODE_FREE
-var mode         = MODE_FREE
 
 var texture_scale = 2.0
 
@@ -39,7 +35,7 @@ func _ready():
 	set_texture_size(2048)
 	# Disable physics process so we avoid useless updates of tex2view textures
 	set_physics_process(false)
-	set_current_tool(2)
+	set_current_tool(MODE_FREE)
 
 func set_object(o):
 	object_name = o.name
@@ -60,19 +56,10 @@ func set_object(o):
 func set_texture_size(s):
 	painter.set_texture_size(s)
 
-func set_mode(m):
-	mode = m
-	if mode == MODE_TEXTURE:
-		$Brush/Texture.show()
-	else:
-		$Brush/Texture.hide()
-
 func set_current_tool(m):
 	current_tool = m
 	for i in $Tools.get_child_count():
-		$Tools.get_child(i).pressed = (i+MODE_FIRST_TOOL == m)
-	if mode >= MODE_FIRST_TOOL:
-		set_mode(current_tool)
+		$Tools.get_child(i).pressed = (i == m)
 
 func _physics_process(delta):
 	$MainView/CameraStand.rotate($MainView/CameraStand/Camera.global_transform.basis.x.normalized(), -key_rotate.y*delta)
@@ -81,13 +68,8 @@ func _physics_process(delta):
 
 func _input(ev):
 	if ev is InputEventKey:
-		if ev.scancode == KEY_SHIFT or ev.scancode == KEY_CONTROL:
-			if Input.is_key_pressed(KEY_SHIFT):
-				set_mode(MODE_BRUSH)
-			elif Input.is_key_pressed(KEY_CONTROL):
-				set_mode(MODE_TEXTURE)
-			else:
-				set_mode(current_tool)
+		if ev.scancode == KEY_CONTROL:
+			$Brush.show_pattern(ev.pressed)
 		elif ev.scancode == KEY_LEFT or ev.scancode == KEY_RIGHT or ev.scancode == KEY_UP or ev.scancode == KEY_DOWN:
 			key_rotate = Vector2(0.0, 0.0)
 			if Input.is_key_pressed(KEY_UP):
@@ -109,11 +91,10 @@ func _on_MaterialSpray_gui_input(ev):
 		if ev.button_mask & BUTTON_MASK_LEFT != 0:
 			if ev.control:
 				previous_position = null
-				texture_scale += ev.relative.x*0.1
-				texture_scale = clamp(texture_scale, 0.01, 20.0)
+				brush.edit_pattern(ev.relative)
 			elif ev.shift:
 				previous_position = null
-				brush.change_size(ev.relative)
+				brush.edit_brush(ev.relative)
 			elif current_tool == MODE_FREE:
 				paint(ev.position)
 		elif current_tool != MODE_LINE_STRIP:

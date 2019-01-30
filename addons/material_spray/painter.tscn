@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/material_spray/painter.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/shaders/view2texture.shader" type="Shader" id=2]
 [ext_resource path="res://addons/material_spray/shaders/texture2view.shader" type="Shader" id=3]
-[ext_resource path="res://addons/material_spray/shaders/texturemap.shader" type="Shader" id=4]
+[ext_resource path="res://addons/material_spray/shaders/show_pattern.shader" type="Shader" id=4]
 [ext_resource path="res://addons/material_spray/shaders/texture2view_lsb.shader" type="Shader" id=5]
 [ext_resource path="res://addons/material_spray/shaders/seams.shader" type="Shader" id=6]
 [ext_resource path="res://addons/material_spray/shaders/apply_seams.shader" type="Shader" id=7]
@@ -13,6 +13,7 @@
 [ext_resource path="res://Suzanne_albedo.png" type="Texture" id=11]
 [ext_resource path="res://addons/material_spray/shaders/init_mr.shader" type="Shader" id=12]
 [ext_resource path="res://Suzanne_mr.png" type="Texture" id=13]
+
 
 [sub_resource type="CubeMesh" id=1]
 

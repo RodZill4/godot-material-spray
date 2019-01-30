@@ -62,7 +62,6 @@ material/0 = SubResource( 5 )
 [node name="Brush" parent="." instance=ExtResource( 4 )]
 
 [node name="Tools" type="HBoxContainer" parent="."]
-editor/display_folded = true
 margin_right = 149.0
 margin_bottom = 32.0
 
@@ -150,10 +149,10 @@ selected = 0
 
 [connection signal="gui_input" from="." to="." method="_on_MaterialSpray_gui_input"]
 [connection signal="resized" from="." to="." method="_on_resized"]
-[connection signal="material_changed" from="Brush" to="Painter" method="material_changed"]
-[connection signal="pressed" from="Tools/Free" to="." method="set_current_tool" binds= [ 2 ]]
-[connection signal="pressed" from="Tools/Line" to="." method="set_current_tool" binds= [ 3 ]]
-[connection signal="pressed" from="Tools/Strip" to="." method="set_current_tool" binds= [ 4 ]]
+[connection signal="brush_changed" from="Brush" to="Painter" method="brush_changed"]
+[connection signal="pressed" from="Tools/Free" to="." method="set_current_tool" binds= [ 0 ]]
+[connection signal="pressed" from="Tools/Line" to="." method="set_current_tool" binds= [ 1 ]]
+[connection signal="pressed" from="Tools/Strip" to="." method="set_current_tool" binds= [ 2 ]]
 [connection signal="pressed" from="Tools/Save" to="." method="save"]
 [connection signal="item_selected" from="Debug/Select1" to="." method="_on_DebugSelect_item_selected" binds= [ 0 ]]
 [connection signal="item_selected" from="Debug/Select2" to="." method="_on_DebugSelect_item_selected" binds= [ 1 ]]

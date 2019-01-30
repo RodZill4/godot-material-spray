@@ -1,30 +1,31 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://addons/material_spray/brush.gd" type="Script" id=1]
-[ext_resource path="res://addons/material_spray/shaders/showbrush.shader" type="Shader" id=2]
-[ext_resource path="res://addons/material_spray/icons/line.png" type="Texture" id=3]
+[ext_resource path="res://addons/material_spray/shaders/show_brush.shader" type="Shader" id=2]
+[ext_resource path="res://addons/material_spray/shaders/show_pattern.shader" type="Shader" id=3]
+[ext_resource path="res://addons/material_spray/materials/godot_logo.png" type="Texture" id=4]
 
-
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=1]
 
 shader = ExtResource( 2 )
-shader_param/brush_pos = Vector2( 0.868442, 0.00277393 )
-shader_param/brush_ppos = Vector2( 0.868442, 0.00277393 )
-shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
-shader_param/brush_strength = 0.5
-
-[sub_resource type="Shader" id=5]
-
+shader_param/brush_pos = Vector2( 0.984338, 0.00138696 )
+shader_param/brush_ppos = Vector2( 0.984338, 0.00138696 )
+shader_param/brush_size = Vector2( 0.00728269, 0.0128987 )
+shader_param/brush_strength = 0.65
 
 [sub_resource type="ShaderMaterial" id=3]
 
-shader = SubResource( 5 )
+shader = ExtResource( 3 )
+shader_param/brush_size = Vector2( 0.00728269, 0.0128987 )
+shader_param/pattern_scale = 11.0
+shader_param/texture_angle = 0.0
+shader_param/pattern = ExtResource( 4 )
 
 [sub_resource type="Shader" id=4]
 
 code = "shader_type canvas_item;
 
-uniform sampler2D tex : hint_white;
+uniform sampler2D tex : hint_albedo;
 
 void fragment() {
 	vec3 bg = vec3(vec3(2.0*fract(0.5*(floor(8.0*UV.x)+floor(8.0*UV.y)))));
@@ -32,10 +33,10 @@ void fragment() {
 	COLOR = vec4(bg*(1.0-fg.a) + fg.a*fg.xyz, 1.0);
 }"
 
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ShaderMaterial" id=5]
 
 shader = SubResource( 4 )
-shader_param/tex = ExtResource( 3 )
+shader_param/tex = ExtResource( 4 )
 
 [node name="Brush" type="Control"]
 anchor_right = 1.0
@@ -44,20 +45,19 @@ mouse_filter = 2
 script = ExtResource( 1 )
 
 [node name="Brush" type="ColorRect" parent="."]
-material = SubResource( 6 )
+material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="Texture" type="ColorRect" parent="."]
+[node name="Pattern" type="ColorRect" parent="."]
 visible = false
-self_modulate = Color( 1, 1, 1, 0.502745 )
 material = SubResource( 3 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="BrushUI" type="VBoxContainer" parent="."]
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -65,18 +65,18 @@ anchor_bottom = 1.0
 margin_left = -109.0
 margin_top = -236.0
 
-[node name="Albedo" type="CheckBox" parent="VBoxContainer"]
+[node name="Albedo" type="CheckBox" parent="BrushUI"]
 margin_right = 109.0
 margin_bottom = 24.0
 text = "Albedo"
 
-[node name="AlbedoColor" type="ColorPickerButton" parent="VBoxContainer"]
+[node name="AlbedoColor" type="ColorPickerButton" parent="BrushUI"]
 margin_top = 28.0
 margin_right = 109.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 64, 0 )
 
-[node name="AlbedoTextureMode" type="OptionButton" parent="VBoxContainer"]
+[node name="AlbedoTextureMode" type="OptionButton" parent="BrushUI"]
 margin_top = 52.0
 margin_right = 109.0
 margin_bottom = 72.0
@@ -84,8 +84,8 @@ text = "No texture"
 items = [ "No texture", null, false, 0, null, "Stamp", null, false, -1, null, "Pattern", null, false, -1, null ]
 selected = 0
 
-[node name="AlbedoTexture" type="ColorRect" parent="VBoxContainer"]
-material = SubResource( 2 )
+[node name="AlbedoTexture" type="ColorRect" parent="BrushUI"]
+material = SubResource( 5 )
 margin_left = 22.0
 margin_top = 76.0
 margin_right = 86.0
@@ -93,13 +93,13 @@ margin_bottom = 140.0
 rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 4
 
-[node name="Metallic" type="CheckBox" parent="VBoxContainer"]
+[node name="Metallic" type="CheckBox" parent="BrushUI"]
 margin_top = 144.0
 margin_right = 109.0
 margin_bottom = 168.0
 text = "Metallic"
 
-[node name="MetallicValue" type="HSlider" parent="VBoxContainer"]
+[node name="MetallicValue" type="HSlider" parent="BrushUI"]
 margin_top = 172.0
 margin_right = 109.0
 margin_bottom = 188.0
@@ -107,13 +107,13 @@ max_value = 1.0
 step = 0.01
 ticks_on_borders = true
 
-[node name="Roughness" type="CheckBox" parent="VBoxContainer"]
+[node name="Roughness" type="CheckBox" parent="BrushUI"]
 margin_top = 192.0
 margin_right = 109.0
 margin_bottom = 216.0
 text = "Roughness"
 
-[node name="RoughnessValue" type="HSlider" parent="VBoxContainer"]
+[node name="RoughnessValue" type="HSlider" parent="BrushUI"]
 margin_top = 220.0
 margin_right = 109.0
 margin_bottom = 236.0
@@ -122,11 +122,11 @@ step = 0.01
 ticks_on_borders = true
 
 [connection signal="resized" from="." to="." method="_on_Brush_resized"]
-[connection signal="pressed" from="VBoxContainer/Albedo" to="." method="_on_Checkbox_pressed"]
-[connection signal="color_changed" from="VBoxContainer/AlbedoColor" to="." method="_on_Color_color_changed"]
-[connection signal="item_selected" from="VBoxContainer/AlbedoTextureMode" to="." method="_on_OptionButton_item_selected"]
-[connection signal="gui_input" from="VBoxContainer/AlbedoTexture" to="." method="_on_AlbedoTexture_gui_input"]
-[connection signal="pressed" from="VBoxContainer/Metallic" to="." method="_on_Checkbox_pressed"]
-[connection signal="value_changed" from="VBoxContainer/MetallicValue" to="." method="_on_HSlider_value_changed"]
-[connection signal="pressed" from="VBoxContainer/Roughness" to="." method="_on_Checkbox_pressed"]
-[connection signal="value_changed" from="VBoxContainer/RoughnessValue" to="." method="_on_HSlider_value_changed"]
+[connection signal="pressed" from="BrushUI/Albedo" to="." method="_on_Checkbox_pressed"]
+[connection signal="color_changed" from="BrushUI/AlbedoColor" to="." method="_on_Color_color_changed"]
+[connection signal="item_selected" from="BrushUI/AlbedoTextureMode" to="." method="_on_OptionButton_item_selected"]
+[connection signal="gui_input" from="BrushUI/AlbedoTexture" to="." method="_on_AlbedoTexture_gui_input"]
+[connection signal="pressed" from="BrushUI/Metallic" to="." method="_on_Checkbox_pressed"]
+[connection signal="value_changed" from="BrushUI/MetallicValue" to="." method="_on_HSlider_value_changed"]
+[connection signal="pressed" from="BrushUI/Roughness" to="." method="_on_Checkbox_pressed"]
+[connection signal="value_changed" from="BrushUI/RoughnessValue" to="." method="_on_HSlider_value_changed"]

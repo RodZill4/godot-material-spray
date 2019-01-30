@@ -37,7 +37,7 @@ var camera
 var transform
 var viewport_size
 
-var current_material = null
+var current_brush = null
 
 func _ready():
 	# add View2Texture as input of Texture2View (to ignore non-visible parts of the mesh)
@@ -124,9 +124,6 @@ func set_texture_size(s : float):
 	mr_paintrect.rect_size = Vector2(s, s)
 	mr_initrect.rect_size = Vector2(s, s)
 
-func change_material(m):
-	current_material = m
-
 func update_view(c, t, s):
 	camera = c
 	transform = t
@@ -156,17 +153,18 @@ func update_tex2view():
 #		viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 #		viewport.update_worlds()
 
-func material_changed(new_material):
-	current_material = new_material
-	albedo_material.set_shader_param("brush_color", current_material.albedo_color)
-	var alpha = current_material.albedo_color.a
+func brush_changed(new_material):
+	current_brush = new_material
+	albedo_material.set_shader_param("brush_color", current_brush.albedo_color)
+	var alpha = current_brush.albedo_color.a
 	albedo_material.set_shader_param("brush_channelmask", Color(alpha, alpha, alpha))
-	if current_material.albedo_texture_mode == 0:
-		albedo_material.set_shader_param("brush_texture", null)
+	if current_brush.albedo_texture_mode == 0:
+		albedo_material.set_shader_param("pattern", null)
 	else:
-		albedo_material.set_shader_param("brush_texture", current_material.albedo_texture)
-	mr_material.set_shader_param("brush_color", Color(current_material.metallic, current_material.roughness, 0.0))
-	mr_material.set_shader_param("brush_channelmask", Color(1.0 if current_material.has_metallic else 0.0, 1.0 if current_material.has_roughness else 0.0, 1.0))
+		albedo_material.set_shader_param("pattern", current_brush.albedo_texture)
+		albedo_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
+	mr_material.set_shader_param("brush_color", Color(current_brush.metallic, current_brush.roughness, 0.0))
+	mr_material.set_shader_param("brush_channelmask", Color(1.0 if current_brush.has_metallic else 0.0, 1.0 if current_brush.has_roughness else 0.0, 1.0))
 	if viewport_size != null:
 		var brush_size_vector = Vector2(new_material.size, new_material.size)/viewport_size
 		if albedo_material != null:
@@ -177,12 +175,12 @@ func material_changed(new_material):
 			mr_material.set_shader_param("brush_strength", new_material.strength)
 
 func do_paint(position, prev_position):
-	if current_material.has_albedo:
+	if current_brush.has_albedo:
 		albedo_material.set_shader_param("brush_pos", position)
 		albedo_material.set_shader_param("brush_ppos", prev_position)
 		albedo_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 		albedo_viewport.update_worlds()
-	if current_material.has_metallic or current_material.has_roughness:
+	if current_brush.has_metallic or current_brush.has_roughness:
 		mr_material.set_shader_param("brush_pos", position)
 		mr_material.set_shader_param("brush_ppos", prev_position)
 		mr_viewport.render_target_update_mode = Viewport.UPDATE_ONCE

@@ -2,30 +2,65 @@ tool
 extends Control
 
 var current_brush = {
-	size     = 50.0,
-	strength = 0.5
+	size          = 50.0,
+	strength      = 0.5,
+	pattern_scale = 10.0,
+	texture_angle = 0.0
 }
 var albedo_texture_filename = null
+var albedo_texture = null
 
 onready var brush_material = $Brush.material
+onready var pattern_material = $Pattern.material
 
-signal material_changed(new_material)
 signal brush_changed(new_brush)
 
 func _ready():
 	update_material()
 
+func edit_brush(s):
+	current_brush.size += s.x*0.1
+	current_brush.size = clamp(current_brush.size, 0.0, 250.0)
+	current_brush.strength += s.y*0.01
+	current_brush.strength = clamp(current_brush.strength, 0.0, 0.999)
+	update_brush()
+
+func show_pattern(b):
+	$Pattern.visible = b and ($BrushUI/AlbedoTextureMode.selected == 2)
+
+func edit_pattern(s):
+	current_brush.pattern_scale += s.x*0.1
+	current_brush.pattern_scale = clamp(current_brush.pattern_scale, 0.1, 25.0)
+	current_brush.texture_angle += fmod(s.y*0.01, 2.0*PI)
+	update_brush()
+
+func update_brush():
+	var brush_size_vector = Vector2(current_brush.size, current_brush.size)/rect_size
+	if brush_material != null:
+		brush_material.set_shader_param("brush_size", brush_size_vector)
+		brush_material.set_shader_param("brush_strength", current_brush.strength)
+		brush_material.set_shader_param("texture_angle", current_brush.texture_angle)
+	if pattern_material != null:
+		pattern_material.set_shader_param("brush_size", brush_size_vector)
+		pattern_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
+		pattern_material.set_shader_param("texture_angle", current_brush.texture_angle)
+	emit_signal("brush_changed", current_brush)
+
 func update_material():
-	current_brush.has_albedo = $VBoxContainer/Albedo.pressed
-	current_brush.albedo_color = $VBoxContainer/AlbedoColor.color
-	current_brush.albedo_texture_mode = $VBoxContainer/AlbedoTextureMode.selected
+	if $BrushUI/AlbedoTextureMode.selected != 2:
+		$Pattern.visible = false
+	if pattern_material != null:
+		pattern_material.set_shader_param("pattern", albedo_texture)
+	current_brush.has_albedo = $BrushUI/Albedo.pressed
+	current_brush.albedo_color = $BrushUI/AlbedoColor.color
+	current_brush.albedo_texture_mode = $BrushUI/AlbedoTextureMode.selected
 	current_brush.albedo_texture_file_name = albedo_texture_filename
-	current_brush.albedo_texture = $VBoxContainer/AlbedoTexture.material.get_shader_param("tex")
-	current_brush.has_metallic = $VBoxContainer/Metallic.pressed
-	current_brush.metallic = $VBoxContainer/MetallicValue.value
-	current_brush.has_roughness = $VBoxContainer/Roughness.pressed
-	current_brush.roughness = $VBoxContainer/RoughnessValue.value
-	emit_signal("material_changed", current_brush)
+	current_brush.albedo_texture = albedo_texture
+	current_brush.has_metallic = $BrushUI/Metallic.pressed
+	current_brush.metallic = $BrushUI/MetallicValue.value
+	current_brush.has_roughness = $BrushUI/Roughness.pressed
+	current_brush.roughness = $BrushUI/RoughnessValue.value
+	emit_signal("brush_changed", current_brush)
 
 func _on_Checkbox_pressed():
 	update_material()
@@ -52,23 +87,9 @@ func _on_AlbedoTexture_gui_input(event):
 
 func do_load_albedo_texture(filename):
 	albedo_texture_filename = filename
-	$VBoxContainer/AlbedoTexture.material.set_shader_param("tex", load(filename))
+	albedo_texture = load(filename)
+	$BrushUI/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
 	update_material()
-
-func change_size(s):
-	print(current_brush)
-	current_brush.size += s.x*0.1
-	current_brush.size = clamp(current_brush.size, 0.0, 250.0)
-	current_brush.strength += s.y*0.01
-	current_brush.strength = clamp(current_brush.strength, 0.0, 0.999)
-	update_brush()
-
-func update_brush():
-	var brush_size_vector = Vector2(current_brush.size, current_brush.size)/rect_size
-	if brush_material != null:
-		brush_material.set_shader_param("brush_size", brush_size_vector)
-		brush_material.set_shader_param("brush_strength", current_brush.strength)
-	emit_signal("material_changed", current_brush)
 
 func _on_Brush_resized():
 	update_brush()
