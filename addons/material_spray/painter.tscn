@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://addons/material_spray/painter.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/shaders/view2texture.shader" type="Shader" id=2]
@@ -8,12 +8,10 @@
 [ext_resource path="res://addons/material_spray/shaders/seams.shader" type="Shader" id=6]
 [ext_resource path="res://addons/material_spray/shaders/apply_seams.shader" type="Shader" id=7]
 [ext_resource path="res://addons/material_spray/shaders/paint.shader" type="Shader" id=8]
-[ext_resource path="res://addons/material_spray/icons/line.png" type="Texture" id=9]
-[ext_resource path="res://addons/material_spray/shaders/init_albedo.shader" type="Shader" id=10]
-[ext_resource path="res://Suzanne_albedo.png" type="Texture" id=11]
-[ext_resource path="res://addons/material_spray/shaders/init_mr.shader" type="Shader" id=12]
-[ext_resource path="res://Suzanne_mr.png" type="Texture" id=13]
-
+[ext_resource path="res://addons/material_spray/shaders/init_albedo.shader" type="Shader" id=9]
+[ext_resource path="res://Suzanne_albedo.png" type="Texture" id=10]
+[ext_resource path="res://addons/material_spray/shaders/init_mr.shader" type="Shader" id=11]
+[ext_resource path="res://Suzanne_mr.png" type="Texture" id=12]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -23,40 +21,43 @@ size = Vector3( 1, 1, 1 )
 
 shader = ExtResource( 2 )
 
-[sub_resource type="ViewportTexture" id=20]
+[sub_resource type="ViewportTexture" id=3]
 
 
 [sub_resource type="ShaderMaterial" id=4]
 
 shader = ExtResource( 3 )
-shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.9 )
+shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
 shader_param/fovy_degrees = 70.0
 shader_param/z_near = 0.05
 shader_param/z_far = 25.0
-shader_param/aspect = 1.77115
-shader_param/view2texture = SubResource( 20 )
+shader_param/aspect = 1.70667
+shader_param/view2texture = SubResource( 3 )
 
 [sub_resource type="ShaderMaterial" id=5]
 
 shader = ExtResource( 4 )
+shader_param/brush_size = Vector2( 0.25, 0.25 )
+shader_param/pattern_scale = 10.0
+shader_param/texture_angle = 0.0
 
 [sub_resource type="ShaderMaterial" id=6]
 
 shader = ExtResource( 5 )
-shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.9 )
+shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
 shader_param/fovy_degrees = 70.0
 shader_param/z_near = 0.05
 shader_param/z_far = 25.0
-shader_param/aspect = 1.77115
-shader_param/view2texture = SubResource( 20 )
+shader_param/aspect = 1.70667
+shader_param/view2texture = SubResource( 3 )
 
-[sub_resource type="ViewportTexture" id=21]
+[sub_resource type="ViewportTexture" id=7]
 
 
 [sub_resource type="ShaderMaterial" id=8]
 
 shader = ExtResource( 6 )
-shader_param/tex = SubResource( 21 )
+shader_param/tex = SubResource( 7 )
 
 [sub_resource type="ViewportTexture" id=9]
 
@@ -79,59 +80,61 @@ shader = ExtResource( 7 )
 shader_param/tex = SubResource( 12 )
 shader_param/seams = SubResource( 9 )
 
-[sub_resource type="ViewportTexture" id=22]
+[sub_resource type="ViewportTexture" id=14]
 
 
-[sub_resource type="ViewportTexture" id=23]
+[sub_resource type="ViewportTexture" id=15]
 
 
 [sub_resource type="ShaderMaterial" id=16]
 
 shader = ExtResource( 8 )
-shader_param/brush_pos = Vector2( 0.635082, 0.737864 )
-shader_param/brush_ppos = Vector2( 0.635082, 0.737864 )
-shader_param/brush_size = Vector2( 0.195771, 0.346741 )
-shader_param/brush_strength = 0.999
-shader_param/brush_color = Color( 1, 1, 1, 1 )
+shader_param/brush_pos = Vector2( 0.460454, 0.481276 )
+shader_param/brush_ppos = Vector2( 0.460454, 0.481276 )
+shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_strength = 0.5
+shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 1, 1, 1, 1 )
-shader_param/pattern_scale = 1.0
-shader_param/tex2view_tex = SubResource( 21 )
-shader_param/tex2viewlsb_tex = SubResource( 23 )
-shader_param/brush_texture = ExtResource( 9 )
-shader_param/seams = SubResource( 22 )
+shader_param/pattern_scale = 8.59998
+shader_param/texture_angle = 0.0
+shader_param/tex2view_tex = SubResource( 7 )
+shader_param/tex2viewlsb_tex = SubResource( 15 )
+shader_param/seams = SubResource( 14 )
 
 [sub_resource type="ShaderMaterial" id=17]
 
-shader = ExtResource( 10 )
+shader = ExtResource( 9 )
 shader_param/col = Color( 1, 1, 1, 1 )
-shader_param/tex = ExtResource( 11 )
+shader_param/tex = ExtResource( 10 )
 
 [sub_resource type="ShaderMaterial" id=18]
 
 shader = ExtResource( 8 )
 shader_param/brush_pos = Vector2( 0.359436, 0.386963 )
 shader_param/brush_ppos = Vector2( 0.359436, 0.386963 )
-shader_param/brush_size = Vector2( 0.195771, 0.346741 )
-shader_param/brush_strength = 0.999
+shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_strength = 0.5
 shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 0, 0, 1, 1 )
 shader_param/pattern_scale = 1.0
-shader_param/tex2view_tex = SubResource( 21 )
-shader_param/tex2viewlsb_tex = SubResource( 23 )
-shader_param/seams = SubResource( 22 )
+shader_param/texture_angle = 0.0
+shader_param/tex2view_tex = SubResource( 7 )
+shader_param/tex2viewlsb_tex = SubResource( 15 )
+shader_param/seams = SubResource( 14 )
 
 [sub_resource type="ShaderMaterial" id=19]
 
-shader = ExtResource( 12 )
+shader = ExtResource( 11 )
 shader_param/metallic_mask = Color( 1, 0, 0, 0 )
 shader_param/roughness_mask = Color( 0, 1, 0, 0 )
-shader_param/metallic = ExtResource( 13 )
-shader_param/roughness = ExtResource( 13 )
+shader_param/metallic = ExtResource( 12 )
+shader_param/roughness = ExtResource( 12 )
 
 [node name="Painter" type="Node"]
 script = ExtResource( 1 )
 
 [node name="View2Texture" type="Viewport" parent="."]
+editor/display_folded = true
 size = Vector2( 1024, 600 )
 own_world = true
 transparent_bg = true
@@ -241,7 +244,6 @@ margin_right = 2048.0
 margin_bottom = 2048.0
 
 [node name="AlbedoPaint" type="Viewport" parent="."]
-editor/display_folded = true
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true

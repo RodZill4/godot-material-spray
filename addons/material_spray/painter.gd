@@ -153,26 +153,25 @@ func update_tex2view():
 #		viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 #		viewport.update_worlds()
 
-func brush_changed(new_material):
-	current_brush = new_material
+func brush_changed(new_brush):
+	current_brush = new_brush
 	albedo_material.set_shader_param("brush_color", current_brush.albedo_color)
 	var alpha = current_brush.albedo_color.a
 	albedo_material.set_shader_param("brush_channelmask", Color(alpha, alpha, alpha))
-	if current_brush.albedo_texture_mode == 0:
-		albedo_material.set_shader_param("pattern", null)
-	else:
-		albedo_material.set_shader_param("pattern", current_brush.albedo_texture)
-		albedo_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
+	albedo_material.set_shader_param("brush_texture", current_brush.albedo_texture)
+	albedo_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
+	albedo_material.set_shader_param("texture_angle", current_brush.texture_angle)
+	albedo_material.set_shader_param("stamp_mode", current_brush.albedo_texture_mode == 1)
 	mr_material.set_shader_param("brush_color", Color(current_brush.metallic, current_brush.roughness, 0.0))
 	mr_material.set_shader_param("brush_channelmask", Color(1.0 if current_brush.has_metallic else 0.0, 1.0 if current_brush.has_roughness else 0.0, 1.0))
 	if viewport_size != null:
-		var brush_size_vector = Vector2(new_material.size, new_material.size)/viewport_size
+		var brush_size_vector = Vector2(current_brush.size, current_brush.size)/viewport_size
 		if albedo_material != null:
 			albedo_material.set_shader_param("brush_size", brush_size_vector)
-			albedo_material.set_shader_param("brush_strength", new_material.strength)
+			albedo_material.set_shader_param("brush_strength", current_brush.strength)
 		if mr_material != null:
 			mr_material.set_shader_param("brush_size", brush_size_vector)
-			mr_material.set_shader_param("brush_strength", new_material.strength)
+			mr_material.set_shader_param("brush_strength", current_brush.strength)
 
 func do_paint(position, prev_position):
 	if current_brush.has_albedo:

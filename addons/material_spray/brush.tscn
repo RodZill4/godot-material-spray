@@ -3,25 +3,27 @@
 [ext_resource path="res://addons/material_spray/brush.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/shaders/show_brush.shader" type="Shader" id=2]
 [ext_resource path="res://addons/material_spray/shaders/show_pattern.shader" type="Shader" id=3]
-[ext_resource path="res://addons/material_spray/materials/godot_logo.png" type="Texture" id=4]
+[ext_resource path="res://addons/material_spray/materials/empty.png" type="Texture" id=4]
 
 [sub_resource type="ShaderMaterial" id=1]
 
 shader = ExtResource( 2 )
-shader_param/brush_pos = Vector2( 0.984338, 0.00138696 )
-shader_param/brush_ppos = Vector2( 0.984338, 0.00138696 )
-shader_param/brush_size = Vector2( 0.00728269, 0.0128987 )
-shader_param/brush_strength = 0.65
+shader_param/brush_pos = Vector2( 0.760376, 0.0124827 )
+shader_param/brush_ppos = Vector2( 0.760376, 0.0124827 )
+shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
+shader_param/brush_strength = 0.5
+shader_param/pattern_scale = 10.0
+shader_param/texture_angle = 0.0
+shader_param/stamp_mode = false
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=2]
 
 shader = ExtResource( 3 )
-shader_param/brush_size = Vector2( 0.00728269, 0.0128987 )
-shader_param/pattern_scale = 11.0
+shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
+shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
-shader_param/pattern = ExtResource( 4 )
 
-[sub_resource type="Shader" id=4]
+[sub_resource type="Shader" id=3]
 
 code = "shader_type canvas_item;
 
@@ -33,9 +35,9 @@ void fragment() {
 	COLOR = vec4(bg*(1.0-fg.a) + fg.a*fg.xyz, 1.0);
 }"
 
-[sub_resource type="ShaderMaterial" id=5]
+[sub_resource type="ShaderMaterial" id=4]
 
-shader = SubResource( 4 )
+shader = SubResource( 3 )
 shader_param/tex = ExtResource( 4 )
 
 [node name="Brush" type="Control"]
@@ -52,7 +54,7 @@ mouse_filter = 2
 
 [node name="Pattern" type="ColorRect" parent="."]
 visible = false
-material = SubResource( 3 )
+material = SubResource( 2 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -85,7 +87,7 @@ items = [ "No texture", null, false, 0, null, "Stamp", null, false, -1, null, "P
 selected = 0
 
 [node name="AlbedoTexture" type="ColorRect" parent="BrushUI"]
-material = SubResource( 5 )
+material = SubResource( 4 )
 margin_left = 22.0
 margin_top = 76.0
 margin_right = 86.0
