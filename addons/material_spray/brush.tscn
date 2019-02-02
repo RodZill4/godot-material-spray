@@ -8,8 +8,8 @@
 [sub_resource type="ShaderMaterial" id=1]
 
 shader = ExtResource( 2 )
-shader_param/brush_pos = Vector2( 0.760376, 0.0124827 )
-shader_param/brush_ppos = Vector2( 0.760376, 0.0124827 )
+shader_param/brush_pos = Vector2( 0.680501, 0.00392157 )
+shader_param/brush_ppos = Vector2( 0.680501, 0.00392157 )
 shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
 shader_param/brush_strength = 0.5
 shader_param/pattern_scale = 10.0
@@ -70,6 +70,7 @@ margin_top = -236.0
 [node name="Albedo" type="CheckBox" parent="BrushUI"]
 margin_right = 109.0
 margin_bottom = 24.0
+focus_mode = 0
 text = "Albedo"
 
 [node name="AlbedoColor" type="ColorPickerButton" parent="BrushUI"]
@@ -77,11 +78,13 @@ margin_top = 28.0
 margin_right = 109.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 64, 0 )
+focus_mode = 0
 
 [node name="AlbedoTextureMode" type="OptionButton" parent="BrushUI"]
 margin_top = 52.0
 margin_right = 109.0
 margin_bottom = 72.0
+focus_mode = 0
 text = "No texture"
 items = [ "No texture", null, false, 0, null, "Stamp", null, false, -1, null, "Pattern", null, false, -1, null ]
 selected = 0
@@ -99,29 +102,35 @@ size_flags_horizontal = 4
 margin_top = 144.0
 margin_right = 109.0
 margin_bottom = 168.0
+focus_mode = 0
 text = "Metallic"
 
 [node name="MetallicValue" type="HSlider" parent="BrushUI"]
 margin_top = 172.0
 margin_right = 109.0
 margin_bottom = 188.0
+focus_mode = 0
 max_value = 1.0
 step = 0.01
 ticks_on_borders = true
+focus_mode = 0
 
 [node name="Roughness" type="CheckBox" parent="BrushUI"]
 margin_top = 192.0
 margin_right = 109.0
 margin_bottom = 216.0
+focus_mode = 0
 text = "Roughness"
 
 [node name="RoughnessValue" type="HSlider" parent="BrushUI"]
 margin_top = 220.0
 margin_right = 109.0
 margin_bottom = 236.0
+focus_mode = 0
 max_value = 1.0
 step = 0.01
 ticks_on_borders = true
+focus_mode = 0
 
 [connection signal="resized" from="." to="." method="_on_Brush_resized"]
 [connection signal="pressed" from="BrushUI/Albedo" to="." method="_on_Checkbox_pressed"]

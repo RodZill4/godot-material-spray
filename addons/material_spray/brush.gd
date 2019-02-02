@@ -72,6 +72,24 @@ func update_material():
 	current_brush.roughness = $BrushUI/RoughnessValue.value
 	update_brush()
 
+func brush_selected(brush):
+	current_brush = brush
+	$BrushUI/Albedo.pressed = current_brush.has_albedo
+	$BrushUI/AlbedoColor.color = current_brush.albedo_color
+	$BrushUI/AlbedoTextureMode.selected = current_brush.albedo_texture_mode
+	if current_brush.albedo_texture_mode != 0:
+		albedo_texture_filename = current_brush.albedo_texture_file_name
+		albedo_texture = load(albedo_texture_filename)
+		current_brush.albedo_texture = albedo_texture
+	else:
+		albedo_texture = null
+		albedo_texture_filename = null
+	$BrushUI/Metallic.pressed = current_brush.has_metallic
+	$BrushUI/MetallicValue.value = current_brush.metallic
+	$BrushUI/Roughness.pressed = current_brush.has_roughness
+	$BrushUI/RoughnessValue.value = current_brush.roughness
+	update_brush()
+
 func _on_Checkbox_pressed():
 	update_material()
 
@@ -103,4 +121,3 @@ func do_load_albedo_texture(filename):
 
 func _on_Brush_resized():
 	update_brush()
-

@@ -191,7 +191,17 @@ func get_albedo_texture():
 func get_mr_texture():
 	return mr_viewport.get_texture()
 
+func save_viewport(v : Viewport, f : String):
+	v.get_texture().get_data().save_png(f)
+
+func debug_save_textures():
+	save_viewport(view_to_texture_viewport, "v2t.png")
+	save_viewport(texture_to_view_viewport, "t2v.png")
+	save_viewport(texture_to_view_lsb_viewport, "t2vlsb.png")
+	save_viewport(seams_viewport, "seams.png")
+
 func debug_get_texture(ID):
+	debug_save_textures()
 	if ID == 1:
 		return view_to_texture_viewport.get_texture()
 	elif ID == 2:

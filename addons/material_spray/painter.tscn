@@ -21,7 +21,7 @@ size = Vector3( 1, 1, 1 )
 
 shader = ExtResource( 2 )
 
-[sub_resource type="ViewportTexture" id=3]
+[sub_resource type="ViewportTexture" id=20]
 
 
 [sub_resource type="ShaderMaterial" id=4]
@@ -31,8 +31,8 @@ shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
 shader_param/fovy_degrees = 70.0
 shader_param/z_near = 0.05
 shader_param/z_far = 25.0
-shader_param/aspect = 1.70667
-shader_param/view2texture = SubResource( 3 )
+shader_param/aspect = 1.77115
+shader_param/view2texture = SubResource( 20 )
 
 [sub_resource type="ShaderMaterial" id=5]
 
@@ -48,16 +48,16 @@ shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
 shader_param/fovy_degrees = 70.0
 shader_param/z_near = 0.05
 shader_param/z_far = 25.0
-shader_param/aspect = 1.70667
-shader_param/view2texture = SubResource( 3 )
+shader_param/aspect = 1.77115
+shader_param/view2texture = SubResource( 20 )
 
-[sub_resource type="ViewportTexture" id=7]
+[sub_resource type="ViewportTexture" id=21]
 
 
 [sub_resource type="ShaderMaterial" id=8]
 
 shader = ExtResource( 6 )
-shader_param/tex = SubResource( 7 )
+shader_param/tex = SubResource( 21 )
 
 [sub_resource type="ViewportTexture" id=9]
 
@@ -80,26 +80,27 @@ shader = ExtResource( 7 )
 shader_param/tex = SubResource( 12 )
 shader_param/seams = SubResource( 9 )
 
-[sub_resource type="ViewportTexture" id=14]
+[sub_resource type="ViewportTexture" id=22]
 
 
-[sub_resource type="ViewportTexture" id=15]
+[sub_resource type="ViewportTexture" id=23]
 
 
 [sub_resource type="ShaderMaterial" id=16]
 
 shader = ExtResource( 8 )
-shader_param/brush_pos = Vector2( 0.460454, 0.481276 )
-shader_param/brush_ppos = Vector2( 0.460454, 0.481276 )
+shader_param/brush_pos = Vector2( 0.923258, 0.871013 )
+shader_param/brush_ppos = Vector2( 0.923258, 0.871013 )
 shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
 shader_param/brush_strength = 0.5
 shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 1, 1, 1, 1 )
-shader_param/pattern_scale = 8.59998
+shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
-shader_param/tex2view_tex = SubResource( 7 )
-shader_param/tex2viewlsb_tex = SubResource( 15 )
-shader_param/seams = SubResource( 14 )
+shader_param/stamp_mode = false
+shader_param/tex2view_tex = SubResource( 21 )
+shader_param/tex2viewlsb_tex = SubResource( 23 )
+shader_param/seams = SubResource( 22 )
 
 [sub_resource type="ShaderMaterial" id=17]
 
@@ -110,17 +111,18 @@ shader_param/tex = ExtResource( 10 )
 [sub_resource type="ShaderMaterial" id=18]
 
 shader = ExtResource( 8 )
-shader_param/brush_pos = Vector2( 0.359436, 0.386963 )
-shader_param/brush_ppos = Vector2( 0.359436, 0.386963 )
+shader_param/brush_pos = Vector2( 0.422866, 0.39251 )
+shader_param/brush_ppos = Vector2( 0.422866, 0.39251 )
 shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
 shader_param/brush_strength = 0.5
 shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 0, 0, 1, 1 )
 shader_param/pattern_scale = 1.0
 shader_param/texture_angle = 0.0
-shader_param/tex2view_tex = SubResource( 7 )
-shader_param/tex2viewlsb_tex = SubResource( 15 )
-shader_param/seams = SubResource( 14 )
+shader_param/stamp_mode = false
+shader_param/tex2view_tex = SubResource( 21 )
+shader_param/tex2viewlsb_tex = SubResource( 23 )
+shader_param/seams = SubResource( 22 )
 
 [sub_resource type="ShaderMaterial" id=19]
 
@@ -244,6 +246,7 @@ margin_right = 2048.0
 margin_bottom = 2048.0
 
 [node name="AlbedoPaint" type="Viewport" parent="."]
+editor/display_folded = true
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
