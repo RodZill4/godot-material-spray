@@ -43,11 +43,6 @@ func _ready():
 	# add View2Texture as input of Texture2View (to ignore non-visible parts of the mesh)
 	texture_to_view_mesh.get_surface_material(0).set_shader_param("view2texture", view_to_texture_viewport.get_texture())
 	texture_to_view_lsb_mesh.get_surface_material(0).set_shader_param("view2texture", view_to_texture_viewport.get_texture())
-	# add Texture2View as input of Texture2ViewWithoutSeams
-#	texture_to_view_without_seams_rect.material.set_shader_param("tex", texture_to_view_viewport.get_texture())
-#	texture_to_view_without_seams_rect.material.set_shader_param("seams", seams_viewport.get_texture())
-#	texture_to_view_lsb_without_seams_rect.material.set_shader_param("tex", texture_to_view_lsb_viewport.get_texture())
-#	texture_to_view_lsb_without_seams_rect.material.set_shader_param("seams", seams_viewport.get_texture())
 	# Add Texture2ViewWithoutSeams as input to all painted textures
 	albedo_material.set_shader_param("tex2view_tex", texture_to_view_viewport.get_texture())
 	albedo_material.set_shader_param("tex2viewlsb_tex", texture_to_view_lsb_viewport.get_texture())
@@ -162,8 +157,14 @@ func brush_changed(new_brush):
 	albedo_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
 	albedo_material.set_shader_param("texture_angle", current_brush.texture_angle)
 	albedo_material.set_shader_param("stamp_mode", current_brush.albedo_texture_mode == 1)
+	albedo_material.set_shader_param("texture_mask", Color(1.0, 1.0, 1.0, 1.0))
 	mr_material.set_shader_param("brush_color", Color(current_brush.metallic, current_brush.roughness, 0.0))
 	mr_material.set_shader_param("brush_channelmask", Color(1.0 if current_brush.has_metallic else 0.0, 1.0 if current_brush.has_roughness else 0.0, 1.0))
+	mr_material.set_shader_param("brush_texture", current_brush.albedo_texture)
+	mr_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
+	mr_material.set_shader_param("texture_angle", current_brush.texture_angle)
+	mr_material.set_shader_param("stamp_mode", current_brush.albedo_texture_mode == 1)
+	mr_material.set_shader_param("texture_mask", Color(0.0, 0.0, 0.0, 1.0))
 	if viewport_size != null:
 		var brush_size_vector = Vector2(current_brush.size, current_brush.size)/viewport_size
 		if albedo_material != null:

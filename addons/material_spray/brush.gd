@@ -81,9 +81,11 @@ func brush_selected(brush):
 		albedo_texture_filename = current_brush.albedo_texture_file_name
 		albedo_texture = load(albedo_texture_filename)
 		current_brush.albedo_texture = albedo_texture
+		$BrushUI/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
 	else:
 		albedo_texture = null
 		albedo_texture_filename = null
+		$BrushUI/AlbedoTexture.material.set_shader_param("tex", preload("res://addons/material_spray/materials/empty.png"))
 	$BrushUI/Metallic.pressed = current_brush.has_metallic
 	$BrushUI/MetallicValue.value = current_brush.metallic
 	$BrushUI/Roughness.pressed = current_brush.has_roughness
