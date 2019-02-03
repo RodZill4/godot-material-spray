@@ -13,7 +13,7 @@ void fragment() {
 	color += vec3(-1.0, 1.0, 0.0) * textureLod(tex, UV+vec2(-epsilon, epsilon), epsilon).rgb;
 	color += vec3(0.0, 2.0, 0.0) * textureLod(tex, UV+vec2(0.0, epsilon), epsilon).rgb;
 	color += vec3(1.0, 1.0, 0.0) * textureLod(tex, UV+vec2(epsilon, epsilon), epsilon).rgb;
-	color *= 1.0;
+	color *= vec3(1.0, -1.0, 0.0);
 	color += vec3(0.0, 0.0, -1.0);
 	color = normalize(color);
 	color *= 0.5;
