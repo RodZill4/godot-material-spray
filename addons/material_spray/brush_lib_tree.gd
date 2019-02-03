@@ -4,6 +4,23 @@ extends Tree
 var selected_item = null
 var brush_count = 0
 
+const DEFAULT_BRUSH = {
+	has_albedo = false,
+	albedo_color = { r=0.0, g=0.0, b=0.0, a=1.0 },
+	albedo_texture_mode = 0,
+	albedo_texture = null,
+	albedo_texture_file_name = null,
+	has_metallic = false,
+	metallic = 0.0,
+	has_roughness = false,
+	roughness = 0.0,
+	has_emission = false,
+	emission_color = { r=0.0, g=0.0, b=0.0, a=1.0 },
+	emission_texture_mode = 0,
+	emission_texture = null,
+	emission_texture_file_name = null
+}
+
 func _ready():
 	create_item()
 
@@ -83,7 +100,11 @@ func set_lib(lib, parent = null):
 	if lib.has("name"):
 		item.set_text(0, lib.name)
 	if lib.has("brush"):
+		for k in DEFAULT_BRUSH.keys():
+			if !lib.brush.has(k):
+				lib.brush[k] = DEFAULT_BRUSH[k]
 		lib.brush.albedo_color = decode_color(lib.brush.albedo_color)
+		lib.brush.emission_color = decode_color(lib.brush.emission_color)
 		item.set_metadata(0, lib.brush)
 	if lib.has("children"):
 		for c in lib.children:
@@ -97,6 +118,7 @@ func get_lib(item = null):
 	if item.get_metadata(0) != null:
 		lib.brush=item.get_metadata(0)
 		lib.brush.albedo_color = encode_color(lib.brush.albedo_color)
+		lib.brush.emission_color = encode_color(lib.brush.emission_color)
 	var child_item = item.get_children()
 	if child_item != null:
 		lib.children = []

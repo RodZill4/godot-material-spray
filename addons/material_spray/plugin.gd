@@ -59,12 +59,13 @@ func assign_material(m):
 	editor_file_system.scan()
 	editor_file_system.update_file(m.albedo)
 	editor_file_system.update_file(m.mr)
-	editor_file_system.update_file(m.nm)
+	editor_file_system.update_file(m.emission)
 	texture = load(m.albedo)
 	m.material.albedo_texture = texture
 	texture = load(m.mr)
 	m.material.metallic_texture = texture
 	m.material.roughness_texture = texture
-	texture = load(m.nm)
-	m.material.normal_texture = texture
+	texture = load(m.emission)
+	m.material.emission_enabled = true
+	m.material.emission_texture = texture
 	edited_object.set_surface_material(0, m.material)

@@ -47,6 +47,9 @@ func set_object(o):
 	mat.roughness = 1.0
 	mat.roughness_texture = painter.get_mr_texture()
 	mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
+	mat.emission_enabled = true
+	mat.emission = Color(0.0, 0.0, 0.0, 0.0)
+	mat.emission_texture = painter.get_emission_texture()
 	$MainView/PaintedMesh.mesh = o.mesh
 	$MainView/PaintedMesh.set_surface_material(0, mat)
 	painter.set_mesh(o.mesh)
@@ -184,7 +187,8 @@ func save():
 	var mat = $MainView/PaintedMesh.get_surface_material(0).duplicate()
 	dump_texture(painter.get_albedo_texture(), object_name+"_albedo.png")
 	dump_texture(painter.get_mr_texture(), object_name+"_mr.png")
-	emit_signal("update_material", { material=mat, albedo=object_name+"_albedo.png", mr=object_name+"_mr.png", nm=object_name+"_nm.png" })
+	dump_texture(painter.get_emission_texture(), object_name+"_emission.png")
+	emit_signal("update_material", { material=mat, albedo=object_name+"_albedo.png", mr=object_name+"_mr.png", emission=object_name+"_emission.png" })
 
 func _on_DebugSelect_item_selected(ID, t):
 	var texture = [$Debug/Texture1, $Debug/Texture2][t]

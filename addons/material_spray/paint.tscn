@@ -102,7 +102,6 @@ size_flags_vertical = 0
 text = "Save"
 
 [node name="Debug" type="Control" parent="."]
-editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -600.0
@@ -134,7 +133,7 @@ margin_top = -20.0
 margin_right = 75.0
 size_flags_horizontal = 0
 text = "None"
-items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null ]
+items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null, "Emission", null, false, -1, null ]
 selected = 0
 
 [node name="Select2" type="OptionButton" parent="Debug"]
@@ -146,7 +145,7 @@ margin_right = 75.3855
 margin_bottom = -22.0281
 size_flags_horizontal = 0
 text = "None"
-items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null ]
+items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null, "Emission", null, false, -1, null ]
 selected = 0
 
 [node name="BrushLib" parent="." instance=ExtResource( 11 )]

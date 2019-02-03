@@ -5,10 +5,13 @@ var current_brush = {
 	size          = 50.0,
 	strength      = 0.5,
 	pattern_scale = 10.0,
-	texture_angle = 0.0
+	texture_angle = 0.0,
 }
+
 var albedo_texture_filename = null
 var albedo_texture = null
+var emission_texture_filename = null
+var emission_texture = null
 
 onready var brush_material = $Brush.material
 onready var pattern_material = $Pattern.material
@@ -16,7 +19,8 @@ onready var pattern_material = $Pattern.material
 signal brush_changed(new_brush)
 
 func _ready():
-	$BrushUI/AlbedoTexture.material = $BrushUI/AlbedoTexture.material.duplicate()
+	$BrushUI/AMR/AlbedoTexture.material = $BrushUI/AMR/AlbedoTexture.material.duplicate()
+	$BrushUI/Emission/EmissionTexture.material = $BrushUI/Emission/EmissionTexture.material.duplicate()
 	update_material()
 
 func edit_brush(s):
@@ -30,7 +34,7 @@ func edit_brush(s):
 	update_brush()
 
 func show_pattern(b):
-	$Pattern.visible = b and ($BrushUI/AlbedoTextureMode.selected == 2)
+	$Pattern.visible = b and ($BrushUI/AMR/AlbedoTextureMode.selected == 2)
 
 func edit_pattern(s):
 	current_brush.pattern_scale += s.x*0.1
@@ -47,49 +51,81 @@ func update_brush():
 		brush_material.set_shader_param("brush_strength", current_brush.strength)
 		brush_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
 		brush_material.set_shader_param("texture_angle", current_brush.texture_angle)
-		brush_material.set_shader_param("brush_texture", current_brush.albedo_texture)
-		brush_material.set_shader_param("stamp_mode", current_brush.albedo_texture_mode == 1)
+		brush_material.set_shader_param("brush_texture", null)
+		brush_material.set_shader_param("stamp_mode", 0)
 	if pattern_material != null:
 		pattern_material.set_shader_param("brush_size", brush_size_vector)
 		pattern_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
 		pattern_material.set_shader_param("texture_angle", current_brush.texture_angle)
-		pattern_material.set_shader_param("brush_texture", current_brush.albedo_texture)
+		pattern_material.set_shader_param("brush_texture", null)
+	for parameter in [ "albedo", "emission" ]:
+		if current_brush.get("has_"+parameter):
+			if brush_material != null:
+				brush_material.set_shader_param("brush_texture", current_brush.get(parameter+"_texture"))
+				brush_material.set_shader_param("stamp_mode", current_brush.get(parameter+"_texture_mode") == 1)
+			if pattern_material != null:
+				pattern_material.set_shader_param("brush_texture", current_brush.get(parameter+"_texture"))
 	emit_signal("brush_changed", current_brush)
 
 func update_material():
-	current_brush.has_albedo = $BrushUI/Albedo.pressed
-	current_brush.albedo_color = $BrushUI/AlbedoColor.color
-	current_brush.albedo_texture_mode = $BrushUI/AlbedoTextureMode.selected
+	# AMR
+	current_brush.has_albedo = $BrushUI/AMR/Albedo.pressed
+	current_brush.albedo_color = $BrushUI/AMR/AlbedoColor.color
+	current_brush.albedo_texture_mode = $BrushUI/AMR/AlbedoTextureMode.selected
 	if current_brush.albedo_texture_mode != 0:
 		current_brush.albedo_texture = albedo_texture
 		current_brush.albedo_texture_file_name = albedo_texture_filename
 	else:
 		current_brush.albedo_texture = null
 		current_brush.albedo_texture_file_name = null
-	current_brush.has_metallic = $BrushUI/Metallic.pressed
-	current_brush.metallic = $BrushUI/MetallicValue.value
-	current_brush.has_roughness = $BrushUI/Roughness.pressed
-	current_brush.roughness = $BrushUI/RoughnessValue.value
+	current_brush.has_metallic = $BrushUI/AMR/Metallic.pressed
+	current_brush.metallic = $BrushUI/AMR/MetallicValue.value
+	current_brush.has_roughness = $BrushUI/AMR/Roughness.pressed
+	current_brush.roughness = $BrushUI/AMR/RoughnessValue.value
+	# Emission
+	current_brush.has_emission = $BrushUI/Emission/Emission.pressed
+	current_brush.emission_color = $BrushUI/Emission/EmissionColor.color
+	current_brush.emission_texture_mode = $BrushUI/Emission/EmissionTextureMode.selected
+	if current_brush.emission_texture_mode != 0:
+		current_brush.emission_texture = emission_texture
+		current_brush.emission_texture_file_name = emission_texture_filename
+	else:
+		current_brush.emission_texture = null
+		current_brush.emission_texture_file_name = null
 	update_brush()
 
 func brush_selected(brush):
 	current_brush = brush
-	$BrushUI/Albedo.pressed = current_brush.has_albedo
-	$BrushUI/AlbedoColor.color = current_brush.albedo_color
-	$BrushUI/AlbedoTextureMode.selected = current_brush.albedo_texture_mode
+	# AMR
+	$BrushUI/AMR/Albedo.pressed = current_brush.has_albedo
+	$BrushUI/AMR/AlbedoColor.color = current_brush.albedo_color
+	$BrushUI/AMR/AlbedoTextureMode.selected = current_brush.albedo_texture_mode
 	if current_brush.albedo_texture_mode != 0:
 		albedo_texture_filename = current_brush.albedo_texture_file_name
 		albedo_texture = load(albedo_texture_filename)
 		current_brush.albedo_texture = albedo_texture
-		$BrushUI/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
+		$BrushUI/AMR/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
 	else:
 		albedo_texture = null
 		albedo_texture_filename = null
-		$BrushUI/AlbedoTexture.material.set_shader_param("tex", preload("res://addons/material_spray/materials/empty.png"))
-	$BrushUI/Metallic.pressed = current_brush.has_metallic
-	$BrushUI/MetallicValue.value = current_brush.metallic
-	$BrushUI/Roughness.pressed = current_brush.has_roughness
-	$BrushUI/RoughnessValue.value = current_brush.roughness
+		$BrushUI/AMR/AlbedoTexture.material.set_shader_param("tex", preload("res://addons/material_spray/materials/empty.png"))
+	$BrushUI/AMR/Metallic.pressed = current_brush.has_metallic
+	$BrushUI/AMR/MetallicValue.value = current_brush.metallic
+	$BrushUI/AMR/Roughness.pressed = current_brush.has_roughness
+	$BrushUI/AMR/RoughnessValue.value = current_brush.roughness
+	# Emission
+	$BrushUI/Emission/Emission.pressed = current_brush.has_emission
+	$BrushUI/Emission/EmissionColor.color = current_brush.emission_color
+	$BrushUI/Emission/EmissionTextureMode.selected = current_brush.emission_texture_mode
+	if current_brush.albedo_texture_mode != 0:
+		emission_texture_filename = current_brush.emission_texture_file_name
+		emission_texture = load(emission_texture_filename)
+		current_brush.emission_texture = emission_texture
+		$BrushUI/Emission/EmissionTexture.material.set_shader_param("tex", emission_texture)
+	else:
+		albedo_texture = null
+		albedo_texture_filename = null
+		$BrushUI/Emission/EmissionTexture.material.set_shader_param("tex", preload("res://addons/material_spray/materials/empty.png"))
 	update_brush()
 
 func _on_Checkbox_pressed():
@@ -104,7 +140,7 @@ func _on_HSlider_value_changed(value):
 func _on_OptionButton_item_selected(ID):
 	update_material()
 
-func _on_AlbedoTexture_gui_input(event):
+func _on_Texture_gui_input(event, parameter):
 	if event is InputEventMouseButton:
 		var dialog = FileDialog.new()
 		add_child(dialog)
@@ -112,14 +148,24 @@ func _on_AlbedoTexture_gui_input(event):
 		dialog.access = FileDialog.ACCESS_FILESYSTEM
 		dialog.mode = FileDialog.MODE_OPEN_FILE
 		dialog.add_filter("*.png;PNG image")
-		dialog.connect("file_selected", self, "do_load_albedo_texture")
+		dialog.connect("file_selected", self, "do_load_"+parameter+"_texture")
 		dialog.popup_centered()
 
 func do_load_albedo_texture(filename):
 	albedo_texture_filename = filename
 	albedo_texture = load(filename)
-	$BrushUI/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
+	$BrushUI/AMR/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
+	update_material()
+	
+func do_load_emission_texture(filename):
+	emission_texture_filename = filename
+	emission_texture = load(filename)
+	$BrushUI/Emission/EmissionTexture.material.set_shader_param("tex", emission_texture)
 	update_material()
 
 func _on_Brush_resized():
 	update_brush()
+
+func _on_Parameters_item_selected(ID):
+	for i in range($BrushUI.get_children().size()-1):
+		$BrushUI.get_children()[i].visible = i == ID

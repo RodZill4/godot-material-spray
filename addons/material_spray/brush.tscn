@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/material_spray/brush.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/shaders/show_brush.shader" type="Shader" id=2]
@@ -8,13 +8,13 @@
 [sub_resource type="ShaderMaterial" id=1]
 
 shader = ExtResource( 2 )
-shader_param/brush_pos = Vector2( 0.680501, 0.00392157 )
-shader_param/brush_ppos = Vector2( 0.680501, 0.00392157 )
+shader_param/brush_pos = Vector2( 0.874706, 0.0134639 )
+shader_param/brush_ppos = Vector2( 0.874706, 0.0134639 )
 shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
 shader_param/brush_strength = 0.5
 shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
-shader_param/stamp_mode = false
+shader_param/stamp_mode = 0
 
 [sub_resource type="ShaderMaterial" id=2]
 
@@ -36,6 +36,11 @@ void fragment() {
 }"
 
 [sub_resource type="ShaderMaterial" id=4]
+
+shader = SubResource( 3 )
+shader_param/tex = ExtResource( 4 )
+
+[sub_resource type="ShaderMaterial" id=5]
 
 shader = SubResource( 3 )
 shader_param/tex = ExtResource( 4 )
@@ -64,32 +69,38 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -109.0
-margin_top = -236.0
+margin_left = -222.0
+margin_top = -500.0
+alignment = 2
 
-[node name="Albedo" type="CheckBox" parent="BrushUI"]
+[node name="AMR" type="VBoxContainer" parent="BrushUI"]
+margin_left = 113.0
+margin_top = 240.0
+margin_right = 222.0
+margin_bottom = 476.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="Albedo" type="CheckBox" parent="BrushUI/AMR"]
 margin_right = 109.0
 margin_bottom = 24.0
-focus_mode = 0
 text = "Albedo"
 
-[node name="AlbedoColor" type="ColorPickerButton" parent="BrushUI"]
+[node name="AlbedoColor" type="ColorPickerButton" parent="BrushUI/AMR"]
 margin_top = 28.0
 margin_right = 109.0
 margin_bottom = 48.0
 rect_min_size = Vector2( 64, 0 )
-focus_mode = 0
 
-[node name="AlbedoTextureMode" type="OptionButton" parent="BrushUI"]
+[node name="AlbedoTextureMode" type="OptionButton" parent="BrushUI/AMR"]
 margin_top = 52.0
 margin_right = 109.0
 margin_bottom = 72.0
-focus_mode = 0
 text = "No texture"
 items = [ "No texture", null, false, 0, null, "Stamp", null, false, -1, null, "Pattern", null, false, -1, null ]
 selected = 0
 
-[node name="AlbedoTexture" type="ColorRect" parent="BrushUI"]
+[node name="AlbedoTexture" type="ColorRect" parent="BrushUI/AMR"]
 material = SubResource( 4 )
 margin_left = 22.0
 margin_top = 76.0
@@ -98,14 +109,13 @@ margin_bottom = 140.0
 rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 4
 
-[node name="Metallic" type="CheckBox" parent="BrushUI"]
+[node name="Metallic" type="CheckBox" parent="BrushUI/AMR"]
 margin_top = 144.0
 margin_right = 109.0
 margin_bottom = 168.0
-focus_mode = 0
 text = "Metallic"
 
-[node name="MetallicValue" type="HSlider" parent="BrushUI"]
+[node name="MetallicValue" type="HSlider" parent="BrushUI/AMR"]
 margin_top = 172.0
 margin_right = 109.0
 margin_bottom = 188.0
@@ -115,14 +125,13 @@ step = 0.01
 ticks_on_borders = true
 focus_mode = 0
 
-[node name="Roughness" type="CheckBox" parent="BrushUI"]
+[node name="Roughness" type="CheckBox" parent="BrushUI/AMR"]
 margin_top = 192.0
 margin_right = 109.0
 margin_bottom = 216.0
-focus_mode = 0
 text = "Roughness"
 
-[node name="RoughnessValue" type="HSlider" parent="BrushUI"]
+[node name="RoughnessValue" type="HSlider" parent="BrushUI/AMR"]
 margin_top = 220.0
 margin_right = 109.0
 margin_bottom = 236.0
@@ -132,12 +141,67 @@ step = 0.01
 ticks_on_borders = true
 focus_mode = 0
 
+[node name="Emission" type="VBoxContainer" parent="BrushUI"]
+visible = false
+margin_left = 113.0
+margin_top = 336.0
+margin_right = 222.0
+margin_bottom = 476.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="Emission" type="CheckBox" parent="BrushUI/Emission"]
+margin_right = 109.0
+margin_bottom = 24.0
+focus_mode = 0
+text = "Emission"
+
+[node name="EmissionColor" type="ColorPickerButton" parent="BrushUI/Emission"]
+margin_top = 28.0
+margin_right = 109.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 64, 0 )
+focus_mode = 0
+
+[node name="EmissionTextureMode" type="OptionButton" parent="BrushUI/Emission"]
+margin_top = 52.0
+margin_right = 109.0
+margin_bottom = 72.0
+focus_mode = 0
+text = "No texture"
+items = [ "No texture", null, false, 0, null, "Stamp", null, false, -1, null, "Pattern", null, false, -1, null ]
+selected = 0
+
+[node name="EmissionTexture" type="ColorRect" parent="BrushUI/Emission"]
+material = SubResource( 5 )
+margin_left = 22.0
+margin_top = 76.0
+margin_right = 86.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 64, 64 )
+size_flags_horizontal = 4
+
+[node name="Parameters" type="OptionButton" parent="BrushUI"]
+margin_top = 480.0
+margin_right = 222.0
+margin_bottom = 500.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Albedo, Metallic, Roughness"
+items = [ "Albedo, Metallic, Roughness", null, false, 0, null, "Emission", null, false, 1, null ]
+selected = 0
+
 [connection signal="resized" from="." to="." method="_on_Brush_resized"]
-[connection signal="pressed" from="BrushUI/Albedo" to="." method="_on_Checkbox_pressed"]
-[connection signal="color_changed" from="BrushUI/AlbedoColor" to="." method="_on_Color_color_changed"]
-[connection signal="item_selected" from="BrushUI/AlbedoTextureMode" to="." method="_on_OptionButton_item_selected"]
-[connection signal="gui_input" from="BrushUI/AlbedoTexture" to="." method="_on_AlbedoTexture_gui_input"]
-[connection signal="pressed" from="BrushUI/Metallic" to="." method="_on_Checkbox_pressed"]
-[connection signal="value_changed" from="BrushUI/MetallicValue" to="." method="_on_HSlider_value_changed"]
-[connection signal="pressed" from="BrushUI/Roughness" to="." method="_on_Checkbox_pressed"]
-[connection signal="value_changed" from="BrushUI/RoughnessValue" to="." method="_on_HSlider_value_changed"]
+[connection signal="pressed" from="BrushUI/AMR/Albedo" to="." method="_on_Checkbox_pressed"]
+[connection signal="color_changed" from="BrushUI/AMR/AlbedoColor" to="." method="_on_Color_color_changed"]
+[connection signal="item_selected" from="BrushUI/AMR/AlbedoTextureMode" to="." method="_on_OptionButton_item_selected"]
+[connection signal="gui_input" from="BrushUI/AMR/AlbedoTexture" to="." method="_on_Texture_gui_input" binds= [ "albedo" ]]
+[connection signal="pressed" from="BrushUI/AMR/Metallic" to="." method="_on_Checkbox_pressed"]
+[connection signal="value_changed" from="BrushUI/AMR/MetallicValue" to="." method="_on_HSlider_value_changed"]
+[connection signal="pressed" from="BrushUI/AMR/Roughness" to="." method="_on_Checkbox_pressed"]
+[connection signal="value_changed" from="BrushUI/AMR/RoughnessValue" to="." method="_on_HSlider_value_changed"]
+[connection signal="pressed" from="BrushUI/Emission/Emission" to="." method="_on_Checkbox_pressed"]
+[connection signal="color_changed" from="BrushUI/Emission/EmissionColor" to="." method="_on_Color_color_changed"]
+[connection signal="item_selected" from="BrushUI/Emission/EmissionTextureMode" to="." method="_on_OptionButton_item_selected"]
+[connection signal="gui_input" from="BrushUI/Emission/EmissionTexture" to="." method="_on_Texture_gui_input" binds= [ "emission" ]]
+[connection signal="item_selected" from="BrushUI/Parameters" to="." method="_on_Parameters_item_selected"]
