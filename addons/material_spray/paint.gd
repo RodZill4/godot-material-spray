@@ -50,6 +50,11 @@ func set_object(o):
 	mat.emission_enabled = true
 	mat.emission = Color(0.0, 0.0, 0.0, 0.0)
 	mat.emission_texture = painter.get_emission_texture()
+	mat.normal_enabled = true
+	mat.normal_texture = painter.get_normal_map()
+	mat.depth_enabled = true
+	mat.depth_deep_parallax = true
+	mat.depth_texture = painter.get_depth_texture()
 	$MainView/PaintedMesh.mesh = o.mesh
 	$MainView/PaintedMesh.set_surface_material(0, mat)
 	painter.set_mesh(o.mesh)
@@ -188,7 +193,9 @@ func save():
 	dump_texture(painter.get_albedo_texture(), object_name+"_albedo.png")
 	dump_texture(painter.get_mr_texture(), object_name+"_mr.png")
 	dump_texture(painter.get_emission_texture(), object_name+"_emission.png")
-	emit_signal("update_material", { material=mat, albedo=object_name+"_albedo.png", mr=object_name+"_mr.png", emission=object_name+"_emission.png" })
+	dump_texture(painter.get_normal_map(), object_name+"_nm.png")
+	dump_texture(painter.get_depth_texture(), object_name+"_depth.png")
+	emit_signal("update_material", { material=mat, albedo=object_name+"_albedo.png", mr=object_name+"_mr.png", emission=object_name+"_emission.png", nm=object_name+"_nm.png", depth=object_name+"_depth.png" })
 
 func _on_DebugSelect_item_selected(ID, t):
 	var texture = [$Debug/Texture1, $Debug/Texture2][t]

@@ -45,7 +45,7 @@ void vertex() {
 
 float visibility(vec2 uv, vec3 view_pos) {
 	vec2 uv_delta = textureLod(view2texture, view_pos.xy, 0.0).xy-uv;
-	return step(dot(uv_delta, uv_delta), 0.002);
+	return step(dot(uv_delta, uv_delta), 0.0025);
 	/*
 	vec3 depth_delta = textureLod(view2texture, view_pos.xy, 0.0).xyz-vec3(cos(view_pos.z), sin(view_pos.z*7.0), sin(view_pos.z/7.0));
 	return step(dot(depth_delta, depth_delta), 0.1);

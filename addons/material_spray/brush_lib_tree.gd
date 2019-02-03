@@ -18,7 +18,12 @@ const DEFAULT_BRUSH = {
 	emission_color = { r=0.0, g=0.0, b=0.0, a=1.0 },
 	emission_texture_mode = 0,
 	emission_texture = null,
-	emission_texture_file_name = null
+	emission_texture_file_name = null,
+	has_depth = false,
+	depth_color = { r=0.0, g=0.0, b=0.0, a=1.0 },
+	depth_texture_mode = 0,
+	depth_texture = null,
+	depth_texture_file_name = null
 }
 
 func _ready():
@@ -31,6 +36,11 @@ func create_brush(brush):
 	new_item.set_metadata(0, brush)
 	new_item.set_selectable(0, true)
 	new_item.set_editable(0, true)
+	
+func update_brush(brush):
+	var item = get_selected()
+	if item != null:
+		item.set_metadata(0, brush)
 
 func get_drag_data(position):
 	return get_selected()
@@ -105,6 +115,7 @@ func set_lib(lib, parent = null):
 				lib.brush[k] = DEFAULT_BRUSH[k]
 		lib.brush.albedo_color = decode_color(lib.brush.albedo_color)
 		lib.brush.emission_color = decode_color(lib.brush.emission_color)
+		lib.brush.depth_color = decode_color(lib.brush.depth_color)
 		item.set_metadata(0, lib.brush)
 	if lib.has("children"):
 		for c in lib.children:
@@ -119,6 +130,7 @@ func get_lib(item = null):
 		lib.brush=item.get_metadata(0)
 		lib.brush.albedo_color = encode_color(lib.brush.albedo_color)
 		lib.brush.emission_color = encode_color(lib.brush.emission_color)
+		lib.brush.depth_color = encode_color(lib.brush.depth_color)
 	var child_item = item.get_children()
 	if child_item != null:
 		lib.children = []

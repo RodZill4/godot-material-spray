@@ -38,6 +38,15 @@ onready var emission_initrect = $EmissionPaint/InitRect
 onready var emission_paintrect = $EmissionPaint/PaintRect
 onready var emission_material = $EmissionPaint/PaintRect.get_material()
 
+onready var depth_viewport = $DepthPaint
+onready var depth_initrect = $DepthPaint/InitRect
+onready var depth_paintrect = $DepthPaint/PaintRect
+onready var depth_material = $DepthPaint/PaintRect.get_material()
+
+onready var nm_viewport = $NormalMap
+onready var nm_rect = $NormalMap/Rect
+onready var nm_material = $NormalMap/Rect.get_material()
+
 var camera
 var transform
 var viewport_size
@@ -58,12 +67,17 @@ func _ready():
 	emission_material.set_shader_param("tex2view_tex", texture_to_view_viewport.get_texture())
 	emission_material.set_shader_param("tex2viewlsb_tex", texture_to_view_lsb_viewport.get_texture())
 	emission_material.set_shader_param("seams", seams_viewport.get_texture())
+	depth_material.set_shader_param("tex2view_tex", texture_to_view_viewport.get_texture())
+	depth_material.set_shader_param("tex2viewlsb_tex", texture_to_view_lsb_viewport.get_texture())
+	depth_material.set_shader_param("seams", seams_viewport.get_texture())
+	nm_material.set_shader_param("tex", depth_viewport.get_texture())
 	# Add Texture2View as input to seams texture
 	seams_material.set_shader_param("tex", texture_to_view_viewport.get_texture())
 	# Assign all textures to painted mesh
 	albedo_viewport.get_texture().flags |= Texture.FLAG_FILTER | Texture.FLAG_ANISOTROPIC_FILTER
 	mr_viewport.get_texture().flags |= Texture.FLAG_FILTER | Texture.FLAG_ANISOTROPIC_FILTER
 	emission_viewport.get_texture().flags |= Texture.FLAG_FILTER | Texture.FLAG_ANISOTROPIC_FILTER
+	depth_viewport.get_texture().flags |= Texture.FLAG_FILTER | Texture.FLAG_ANISOTROPIC_FILTER
 
 func update_seams_texture():
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
@@ -115,18 +129,30 @@ func init_textures(m : SpatialMaterial):
 	mr_viewport.update_worlds()
 	emission_initrect.show()
 	if m.emission_enabled:
-		emission_initrect.material.set_shader_param("col", m.emission_color)
+		emission_initrect.material.set_shader_param("col", m.emission)
 		emission_initrect.material.set_shader_param("tex", m.emission_texture)
 	else:
 		emission_initrect.material.set_shader_param("col", Color(0.0, 0.0, 0.0))
 		emission_initrect.material.set_shader_param("tex", null)
 	emission_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	emission_viewport.update_worlds()
+	if m.depth_enabled:
+		depth_initrect.material.set_shader_param("col", Color(1.0, 1.0, 1.0))
+		depth_initrect.material.set_shader_param("tex", m.depth_texture)
+	else:
+		depth_initrect.material.set_shader_param("col", Color(0.0, 0.0, 0.0))
+		depth_initrect.material.set_shader_param("tex", null)
+	depth_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	depth_viewport.update_worlds()
+	depth_initrect.show()
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	albedo_initrect.hide()
 	mr_initrect.hide()
 	emission_initrect.hide()
+	depth_initrect.hide()
+	nm_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	nm_viewport.update_worlds()
 
 func set_texture_size(s : float):
 	texture_to_view_viewport.size = Vector2(s, s)
@@ -140,6 +166,11 @@ func set_texture_size(s : float):
 	emission_viewport.size = Vector2(s, s)
 	emission_paintrect.rect_size = Vector2(s, s)
 	emission_initrect.rect_size = Vector2(s, s)
+	depth_viewport.size = Vector2(s, s)
+	depth_paintrect.rect_size = Vector2(s, s)
+	depth_initrect.rect_size = Vector2(s, s)
+	nm_viewport.size = Vector2(s, s)
+	nm_rect.rect_size = Vector2(s, s)
 
 func update_view(c, t, s):
 	camera = c
@@ -164,11 +195,6 @@ func update_tex2view():
 	for viewport in [ texture_to_view_viewport, texture_to_view_lsb_viewport ]:
 		viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 		viewport.update_worlds()
-#	yield(get_tree(), "idle_frame")
-#	yield(get_tree(), "idle_frame")
-#	for viewport in [ texture_to_view_without_seams_viewport, texture_to_view_lsb_without_seams_viewport ]:
-#		viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-#		viewport.update_worlds()
 
 func brush_changed(new_brush):
 	current_brush = new_brush
@@ -197,6 +223,15 @@ func brush_changed(new_brush):
 	emission_material.set_shader_param("texture_angle", current_brush.texture_angle)
 	emission_material.set_shader_param("stamp_mode", current_brush.emission_texture_mode == 1)
 	emission_material.set_shader_param("texture_mask", Color(1.0, 1.0, 1.0, 1.0))
+	# Depth
+	depth_material.set_shader_param("brush_color", current_brush.depth_color)
+	alpha = current_brush.depth_color.a
+	depth_material.set_shader_param("brush_channelmask", Color(alpha, alpha, alpha))
+	depth_material.set_shader_param("brush_texture", current_brush.depth_texture)
+	depth_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
+	depth_material.set_shader_param("texture_angle", current_brush.texture_angle)
+	depth_material.set_shader_param("stamp_mode", current_brush.depth_texture_mode == 1)
+	depth_material.set_shader_param("texture_mask", Color(1.0, 1.0, 1.0, 1.0))
 	if viewport_size != null:
 		var brush_size_vector = Vector2(current_brush.size, current_brush.size)/viewport_size
 		if albedo_material != null:
@@ -208,6 +243,9 @@ func brush_changed(new_brush):
 		if emission_material != null:
 			emission_material.set_shader_param("brush_size", brush_size_vector)
 			emission_material.set_shader_param("brush_strength", current_brush.strength)
+		if depth_material != null:
+			depth_material.set_shader_param("brush_size", brush_size_vector)
+			depth_material.set_shader_param("brush_strength", current_brush.strength)
 
 func do_paint(position, prev_position):
 	if current_brush.has_albedo:
@@ -225,6 +263,16 @@ func do_paint(position, prev_position):
 		emission_material.set_shader_param("brush_ppos", prev_position)
 		emission_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 		emission_viewport.update_worlds()
+	if current_brush.has_depth:
+		depth_material.set_shader_param("brush_pos", position)
+		depth_material.set_shader_param("brush_ppos", prev_position)
+		depth_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+		depth_viewport.update_worlds()
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		nm_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+		nm_viewport.update_worlds()
+
 
 func get_albedo_texture():
 	return albedo_viewport.get_texture()
@@ -234,6 +282,12 @@ func get_mr_texture():
 
 func get_emission_texture():
 	return emission_viewport.get_texture()
+
+func get_normal_map():
+	return nm_viewport.get_texture()
+	
+func get_depth_texture():
+	return depth_viewport.get_texture()
 
 func save_viewport(v : Viewport, f : String):
 	v.get_texture().get_data().save_png(f)
@@ -245,7 +299,6 @@ func debug_save_textures():
 	save_viewport(seams_viewport, "seams.png")
 
 func debug_get_texture(ID):
-	debug_save_textures()
 	if ID == 1:
 		return view_to_texture_viewport.get_texture()
 	elif ID == 2:
@@ -260,4 +313,8 @@ func debug_get_texture(ID):
 		return mr_viewport.get_texture()
 	elif ID == 7:
 		return emission_viewport.get_texture()
+	elif ID == 8:
+		return depth_viewport.get_texture()
+	elif ID == 9:
+		return nm_viewport.get_texture()
 	return null

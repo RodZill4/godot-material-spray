@@ -68,4 +68,11 @@ func assign_material(m):
 	texture = load(m.emission)
 	m.material.emission_enabled = true
 	m.material.emission_texture = texture
+	texture = load(m.nm)
+	m.material.normal_enabled = true
+	m.material.normal_texture = texture
+	texture = load(m.depth)
+	m.material.depth_enabled = true
+	m.material.depth_deep_parallax = true
+	m.material.depth_texture = texture
 	edited_object.set_surface_material(0, m.material)

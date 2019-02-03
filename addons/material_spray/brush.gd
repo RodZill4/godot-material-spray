@@ -12,6 +12,8 @@ var albedo_texture_filename = null
 var albedo_texture = null
 var emission_texture_filename = null
 var emission_texture = null
+var depth_texture_filename = null
+var depth_texture = null
 
 onready var brush_material = $Brush.material
 onready var pattern_material = $Pattern.material
@@ -21,6 +23,7 @@ signal brush_changed(new_brush)
 func _ready():
 	$BrushUI/AMR/AlbedoTexture.material = $BrushUI/AMR/AlbedoTexture.material.duplicate()
 	$BrushUI/Emission/EmissionTexture.material = $BrushUI/Emission/EmissionTexture.material.duplicate()
+	$BrushUI/Depth/DepthTexture.material = $BrushUI/Depth/DepthTexture.material.duplicate()
 	update_material()
 
 func edit_brush(s):
@@ -30,7 +33,7 @@ func edit_brush(s):
 		current_brush.texture_angle += fmod(s.y*0.01, 2.0*PI)
 	else:
 		current_brush.strength += s.y*0.01
-		current_brush.strength = clamp(current_brush.strength, 0.0, 0.999)
+		current_brush.strength = clamp(current_brush.strength, 0.0, 0.99999)
 	update_brush()
 
 func show_pattern(b):
@@ -58,7 +61,7 @@ func update_brush():
 		pattern_material.set_shader_param("pattern_scale", current_brush.pattern_scale)
 		pattern_material.set_shader_param("texture_angle", current_brush.texture_angle)
 		pattern_material.set_shader_param("brush_texture", null)
-	for parameter in [ "albedo", "emission" ]:
+	for parameter in [ "albedo", "emission", "depth" ]:
 		if current_brush.get("has_"+parameter):
 			if brush_material != null:
 				brush_material.set_shader_param("brush_texture", current_brush.get(parameter+"_texture"))
@@ -92,6 +95,16 @@ func update_material():
 	else:
 		current_brush.emission_texture = null
 		current_brush.emission_texture_file_name = null
+	# Depth
+	current_brush.has_depth = $BrushUI/Depth/Depth.pressed
+	current_brush.depth_color = $BrushUI/Depth/DepthColor.color
+	current_brush.depth_texture_mode = $BrushUI/Depth/DepthTextureMode.selected
+	if current_brush.depth_texture_mode != 0:
+		current_brush.depth_texture = depth_texture
+		current_brush.depth_texture_file_name = depth_texture_filename
+	else:
+		current_brush.depth_texture = null
+		current_brush.depth_texture_file_name = null
 	update_brush()
 
 func brush_selected(brush):
@@ -102,7 +115,7 @@ func brush_selected(brush):
 	$BrushUI/AMR/AlbedoTextureMode.selected = current_brush.albedo_texture_mode
 	if current_brush.albedo_texture_mode != 0:
 		albedo_texture_filename = current_brush.albedo_texture_file_name
-		albedo_texture = load(albedo_texture_filename)
+		albedo_texture = load(albedo_texture_filename) if albedo_texture_filename != null else null
 		current_brush.albedo_texture = albedo_texture
 		$BrushUI/AMR/AlbedoTexture.material.set_shader_param("tex", albedo_texture)
 	else:
@@ -117,15 +130,28 @@ func brush_selected(brush):
 	$BrushUI/Emission/Emission.pressed = current_brush.has_emission
 	$BrushUI/Emission/EmissionColor.color = current_brush.emission_color
 	$BrushUI/Emission/EmissionTextureMode.selected = current_brush.emission_texture_mode
-	if current_brush.albedo_texture_mode != 0:
+	if current_brush.emission_texture_mode != 0:
 		emission_texture_filename = current_brush.emission_texture_file_name
-		emission_texture = load(emission_texture_filename)
+		emission_texture = load(emission_texture_filename) if emission_texture_filename != null else null
 		current_brush.emission_texture = emission_texture
 		$BrushUI/Emission/EmissionTexture.material.set_shader_param("tex", emission_texture)
 	else:
-		albedo_texture = null
-		albedo_texture_filename = null
+		emission_texture = null
+		emission_texture_filename = null
 		$BrushUI/Emission/EmissionTexture.material.set_shader_param("tex", preload("res://addons/material_spray/materials/empty.png"))
+	# Depth
+	$BrushUI/Depth/Depth.pressed = current_brush.has_depth
+	$BrushUI/Depth/DepthColor.color = current_brush.depth_color
+	$BrushUI/Depth/DepthTextureMode.selected = current_brush.depth_texture_mode
+	if current_brush.depth_texture_mode != 0:
+		depth_texture_filename = current_brush.depth_texture_file_name
+		depth_texture = load(depth_texture_filename) if depth_texture_filename != null else null
+		current_brush.depth_texture = depth_texture
+		$BrushUI/Depth/DepthTexture.material.set_shader_param("tex", depth_texture)
+	else:
+		depth_texture = null
+		depth_texture_filename = null
+		$BrushUI/Depth/DepthTexture.material.set_shader_param("tex", preload("res://addons/material_spray/materials/empty.png"))
 	update_brush()
 
 func _on_Checkbox_pressed():
@@ -161,6 +187,12 @@ func do_load_emission_texture(filename):
 	emission_texture_filename = filename
 	emission_texture = load(filename)
 	$BrushUI/Emission/EmissionTexture.material.set_shader_param("tex", emission_texture)
+	update_material()
+	
+func do_load_depth_texture(filename):
+	depth_texture_filename = filename
+	depth_texture = load(filename)
+	$BrushUI/Depth/DepthTexture.material.set_shader_param("tex", depth_texture)
 	update_material()
 
 func _on_Brush_resized():
