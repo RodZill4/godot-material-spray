@@ -75,4 +75,5 @@ func assign_material(m):
 	m.material.depth_enabled = true
 	m.material.depth_deep_parallax = true
 	m.material.depth_texture = texture
+	ResourceSaver.save(m.material_file, m.material)
 	edited_object.set_surface_material(0, m.material)

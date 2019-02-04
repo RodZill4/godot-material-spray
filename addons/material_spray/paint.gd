@@ -189,17 +189,26 @@ func dump_texture(texture, filename):
 	image.save_png(filename)
 
 func save():
+	var dialog = FileDialog.new()
+	add_child(dialog)
+	dialog.rect_min_size = Vector2(500, 500)
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.mode = FileDialog.MODE_SAVE_FILE
+	dialog.add_filter("*.tres;Spatial material")
+	dialog.connect("file_selected", self, "do_save")
+	dialog.popup_centered()
+
+func do_save(file_name):
+	var prefix = file_name.replace(".tres", "")
 	var mat = $MainView/PaintedMesh.get_surface_material(0).duplicate()
-	dump_texture(painter.get_albedo_texture(), object_name+"_albedo.png")
-	dump_texture(painter.get_mr_texture(), object_name+"_mr.png")
-	dump_texture(painter.get_emission_texture(), object_name+"_emission.png")
-	dump_texture(painter.get_normal_map(), object_name+"_nm.png")
-	dump_texture(painter.get_depth_texture(), object_name+"_depth.png")
-	emit_signal("update_material", { material=mat, albedo=object_name+"_albedo.png", mr=object_name+"_mr.png", emission=object_name+"_emission.png", nm=object_name+"_nm.png", depth=object_name+"_depth.png" })
+	dump_texture(painter.get_albedo_texture(), prefix+"_albedo.png")
+	dump_texture(painter.get_mr_texture(), prefix+"_mr.png")
+	dump_texture(painter.get_emission_texture(), prefix+"_emission.png")
+	dump_texture(painter.get_normal_map(), prefix+"_nm.png")
+	dump_texture(painter.get_depth_texture(), prefix+"_depth.png")
+	emit_signal("update_material", { material=mat, material_file=file_name, albedo=prefix+"_albedo.png", mr=prefix+"_mr.png", emission=prefix+"_emission.png", nm=prefix+"_nm.png", depth=prefix+"_depth.png" })
 
 func _on_DebugSelect_item_selected(ID, t):
 	var texture = [$Debug/Texture1, $Debug/Texture2][t]
 	texture.visible = (ID != 0)
 	texture.texture = $Painter.debug_get_texture(ID)
-
-

@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.175"
-     inkscape:cx="-418.88637"
-     inkscape:cy="360.71849"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="-944.71898"
+     inkscape:cy="-744.94089"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -265,6 +265,57 @@
            inkscape:connector-curvature="0"
            sodipodi:nodetypes="ccccc" />
       </g>
+    </g>
+    <g
+       id="g4585"
+       inkscape:export-filename="save.png"
+       inkscape:export-xdpi="5.1167517"
+       inkscape:export-ydpi="5.1167517">
+      <rect
+         ry="80"
+         y="1941.2094"
+         x="-1147.276"
+         height="542.85712"
+         width="542.85712"
+         id="rect4547"
+         style="opacity:0.98999999;fill:#d8d8d8;fill-opacity:1;stroke:#b3b3b3;stroke-width:3.9000001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         style="opacity:0.98999999;fill:none;fill-opacity:1;stroke:#000000;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4549"
+         width="542.85712"
+         height="542.85712"
+         x="-1147.276"
+         y="1941.2094"
+         ry="80" />
+      <rect
+         ry="22.347712"
+         y="2027.7908"
+         x="-1068.2363"
+         height="378.80719"
+         width="371.23105"
+         id="rect4564"
+         style="opacity:1;fill:#233bba;fill-opacity:1;stroke:none;stroke-width:28.34645844;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" />
+      <path
+         id="rect4566"
+         transform="scale(0.9375)"
+         d="M -1030.7617 2435.7188 C -1043.9677 2435.7188 -1054.5996 2446.3487 -1054.5996 2459.5547 L -1054.5996 2543.1992 C -1054.5996 2556.4052 -1043.9677 2567.0371 -1030.7617 2567.0371 L -858.22266 2567.0371 C -845.01665 2567.0371 -834.38672 2556.4052 -834.38672 2543.1992 L -834.38672 2459.5547 C -834.38672 2446.3487 -845.01665 2435.7188 -858.22266 2435.7188 L -1030.7617 2435.7188 z M -1032.5996 2460.2051 L -994.21289 2460.2051 L -994.21289 2543.0371 L -1032.5996 2543.0371 L -1032.5996 2460.2051 z "
+         style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:none;stroke-width:30.23622131;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" />
+      <rect
+         ry="38.850651"
+         y="2046.7311"
+         x="-1034.4863"
+         height="214.026"
+         width="304.93976"
+         id="rect4572"
+         style="opacity:1;fill:#e5e5e5;fill-opacity:1;stroke:none;stroke-width:45.42355347;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" />
+      <rect
+         style="opacity:1;fill:#d33535;fill-opacity:1;stroke:none;stroke-width:22.20360756;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         id="rect4574"
+         width="304.93976"
+         height="51.138901"
+         x="-1034.4863"
+         y="2046.7311"
+         ry="9.2828894" />
     </g>
   </g>
 </svg>
