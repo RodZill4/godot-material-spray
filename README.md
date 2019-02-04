@@ -50,7 +50,7 @@ This texture is generated whenever the view angle is modified and only used in t
 
 ### The texture-to-view textures
 
-This is basically the opposite of the view-to-texture texture, an UV map where the color is the position of the corresponding point in the user view (in the red and green channels). This texture is generated using the same setup^as the first pass of the seams texture (isometric camera, UV as vertex coordinates) and calculate the position in the user view using a function I borrowed from [@Bauxitedev](https://github.com/Bauxitedev)'s project.
+This is basically the opposite of the view-to-texture texture, an UV map where the color is the position of the corresponding point in the user view (in the red and green channels). This texture is generated using the same setup as the first pass of the seams texture (isometric camera, UV as vertex coordinates) and calculate the position in the user view using a function I borrowed from [@Bauxitedev](https://github.com/Bauxitedev)'s project.
 
 The blue channel contains a multiplier that will be used when painting (only pixels whose blue channel is higher than 0 will be painted), and it is calculated from:
 * the normal of the surface compared to the viewer's position
@@ -74,7 +74,7 @@ This shader actually paints textures and is used in 4 viewports in parallel to m
 * Emission
 * Depth (the Normal texture is generated from this one)
 
-This painting shader **just** paints the texture in 2D, and uses the following inputs:
+This painting shader **just** paints the texture in 2D (it is generated in a 2d viewport that only contains a ColorRect with that shader), and uses the following inputs:
 * the **seams** input is used to find the nearest useful pixel of the texture
 * the **texture-to-view** inputs are used to find the corresponding coordinates in the user view
 * the brush parameters are used to calculate the distance from the painted pixel to the brush, and then the color it should be painted and the corresponding alpha. The result then is applied to the current textures.
