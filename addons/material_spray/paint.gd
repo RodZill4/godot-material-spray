@@ -39,27 +39,32 @@ func _ready():
 
 func set_object(o):
 	object_name = o.name
-	var mat = $MainView/PaintedMesh.get_surface_material(0)
-	mat.albedo_texture = painter.get_albedo_texture()
-	mat.metallic = 1.0
-	mat.metallic_texture = painter.get_mr_texture()
-	mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
-	mat.roughness = 1.0
-	mat.roughness_texture = painter.get_mr_texture()
-	mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
-	mat.emission_enabled = true
-	mat.emission = Color(0.0, 0.0, 0.0, 0.0)
-	mat.emission_texture = painter.get_emission_texture()
-	mat.normal_enabled = true
-	mat.normal_texture = painter.get_normal_map()
-	mat.depth_enabled = true
-	mat.depth_deep_parallax = true
-	mat.depth_texture = painter.get_depth_texture()
+	var mat = o.get_surface_material(0)
+	if mat == null:
+		mat = o.mesh.surface_get_material(0)
+	if mat == null:
+		mat = SpatialMaterial.new()
+	var new_mat = SpatialMaterial.new()
+	new_mat.albedo_texture = painter.get_albedo_texture()
+	new_mat.metallic = 1.0
+	new_mat.metallic_texture = painter.get_mr_texture()
+	new_mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
+	new_mat.roughness = 1.0
+	new_mat.roughness_texture = painter.get_mr_texture()
+	new_mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
+	new_mat.emission_enabled = true
+	new_mat.emission = Color(0.0, 0.0, 0.0, 0.0)
+	new_mat.emission_texture = painter.get_emission_texture()
+	new_mat.normal_enabled = true
+	new_mat.normal_texture = painter.get_normal_map()
+	new_mat.depth_enabled = true
+	new_mat.depth_deep_parallax = true
+	new_mat.depth_texture = painter.get_depth_texture()
 	$MainView/PaintedMesh.mesh = o.mesh
-	$MainView/PaintedMesh.set_surface_material(0, mat)
+	$MainView/PaintedMesh.set_surface_material(0, new_mat)
 	painter.set_mesh(o.mesh)
 	update_view()
-	painter.init_textures(o.get_surface_material(0))
+	painter.init_textures(mat)
 
 func set_texture_size(s):
 	painter.set_texture_size(s)

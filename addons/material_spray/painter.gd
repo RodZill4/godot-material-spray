@@ -71,6 +71,7 @@ func _ready():
 	depth_material.set_shader_param("tex2viewlsb_tex", texture_to_view_lsb_viewport.get_texture())
 	depth_material.set_shader_param("seams", seams_viewport.get_texture())
 	nm_material.set_shader_param("tex", depth_viewport.get_texture())
+	nm_material.set_shader_param("seams", seams_viewport.get_texture())
 	# Add Texture2View as input to seams texture
 	seams_material.set_shader_param("tex", texture_to_view_viewport.get_texture())
 	# Assign all textures to painted mesh
@@ -182,6 +183,9 @@ func update_tex2view():
 	var aspect = viewport_size.x/viewport_size.y
 	view_to_texture_viewport.size = 2.0*viewport_size
 	view_to_texture_camera.transform = camera.global_transform
+	view_to_texture_camera.fov = camera.fov
+	view_to_texture_camera.near = camera.near
+	view_to_texture_camera.far = camera.far
 	view_to_texture_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	view_to_texture_viewport.update_worlds()
 	yield(get_tree(), "idle_frame")

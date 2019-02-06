@@ -152,8 +152,8 @@ selected = 0
 
 [connection signal="gui_input" from="." to="." method="_on_MaterialSpray_gui_input"]
 [connection signal="resized" from="." to="." method="_on_resized"]
-[connection signal="brush_changed" from="Brush" to="BrushLib" method="brush_changed"]
 [connection signal="brush_changed" from="Brush" to="Painter" method="brush_changed"]
+[connection signal="brush_changed" from="Brush" to="BrushLib" method="brush_changed"]
 [connection signal="pressed" from="Tools/Free" to="." method="set_current_tool" binds= [ 0 ]]
 [connection signal="pressed" from="Tools/Line" to="." method="set_current_tool" binds= [ 1 ]]
 [connection signal="pressed" from="Tools/Strip" to="." method="set_current_tool" binds= [ 2 ]]

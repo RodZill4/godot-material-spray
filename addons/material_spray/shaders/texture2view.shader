@@ -52,6 +52,10 @@ float visibility(vec2 uv, vec3 view_pos) {
 	*/
 }
 
+vec2 fix_unshaded(vec2 xy) {
+    return mix(pow((xy+vec2(0.055))/vec2(1.055), vec2(2.4)), xy/vec2(12.92), lessThan(xy, vec2(0.0031308*12.92)));
+}
+
 void fragment() {
 	vec4 position = get_projection_matrix()*vec4(global_position.xyz, 1.0);
 	position.xyz /= position.w;
@@ -64,5 +68,5 @@ void fragment() {
 		float normal_multiplier = clamp(5.0*dot(normalize(normal), normalize(position.xyz)), 0.0, 1.0);
 		visible = normal_multiplier*visibility_multiplier;
 	}
-	ALBEDO = vec3(pow(rounded_xyz, vec2(2.22)), visible);
+	ALBEDO = vec3(fix_unshaded(rounded_xyz), visible);
 }

@@ -28,9 +28,9 @@ void fragment() {
 	if (stamp_mode) {
 		mat2 texture_rotation = mat2(vec2(cos(texture_angle), sin(texture_angle)), vec2(-sin(texture_angle), cos(texture_angle)));
 		local_uv = texture_rotation*local_uv;
-		vec2 stamp_limit = step(abs(local_uv), vec2(0.5));
+		vec2 stamp_limit = step(abs(local_uv), vec2(1.0));
 		float a = stamp_limit.x*stamp_limit.y;
-		COLOR = texture(brush_texture, local_uv+vec2(0.5)) * vec4(vec3(1.0), 0.5*a);
+		COLOR = texture(brush_texture, 0.5*local_uv+vec2(0.5)) * vec4(vec3(1.0), 0.5*a);
 	} else {
 		float a = brush(max(0.0, 1.0-length(local_uv)));
 		COLOR = pattern_color(UV) * vec4(vec3(1.0), 0.5*a);
