@@ -99,8 +99,12 @@ func _on_MaterialSpray_gui_input(ev):
 	if ev is InputEventMouseMotion:
 		show_brush(ev.position, previous_position)
 		if ev.button_mask & BUTTON_MASK_RIGHT != 0:
-			$MainView/CameraStand.rotate($MainView/CameraStand/Camera.global_transform.basis.x.normalized(), -0.01*ev.relative.y)
-			$MainView/CameraStand.rotate(Vector3(0, 1, 0), -0.01*ev.relative.x)
+			if ev.shift:
+				$MainView/CameraStand.translate(-0.2*ev.relative.x*$MainView/CameraStand/Camera.transform.basis.x)
+				$MainView/CameraStand.translate(0.2*ev.relative.y*$MainView/CameraStand/Camera.transform.basis.y)
+			else:
+				$MainView/CameraStand.rotate($MainView/CameraStand/Camera.global_transform.basis.x.normalized(), -0.01*ev.relative.y)
+				$MainView/CameraStand.rotate(Vector3(0, 1, 0), -0.01*ev.relative.x)
 		if ev.button_mask & BUTTON_MASK_LEFT != 0:
 			if ev.control:
 				previous_position = null
@@ -112,31 +116,29 @@ func _on_MaterialSpray_gui_input(ev):
 				paint(ev.position)
 		elif current_tool != MODE_LINE_STRIP:
 			previous_position = null
-	elif ev is InputEventMouseButton and !ev.control and !ev.shift:
+	elif ev is InputEventMouseButton:
 		var pos = ev.position
-		if ev.pressed:
-			var zoom = 0.0
-			if ev.button_index == BUTTON_WHEEL_UP:
-				zoom -= 0.1
-				$MainView/CameraStand/Camera.translate(Vector3(0.0, 0.0, zoom))
-				update_view()
-			elif ev.button_index == BUTTON_WHEEL_DOWN:
-				zoom += 0.1
-				$MainView/CameraStand/Camera.translate(Vector3(0.0, 0.0, zoom))
-				update_view()
-			elif ev.button_index == BUTTON_LEFT:
-				if current_tool == MODE_LINE_STRIP && previous_position != null:
-					paint(pos)
-					if ev.doubleclick:
-						pos = null
-				previous_position = pos
-		else:
-			if ev.button_index == BUTTON_RIGHT:
-				update_view()
-			elif ev.button_index == BUTTON_LEFT:
-				if current_tool != MODE_LINE_STRIP:
+		if !ev.control and !ev.shift:
+			if ev.button_index == BUTTON_LEFT:
+				if ev.pressed:
+					if current_tool == MODE_LINE_STRIP && previous_position != null:
+						paint(pos)
+						if ev.doubleclick:
+							pos = null
+					previous_position = pos
+				elif current_tool != MODE_LINE_STRIP:
 					paint(pos)
 					previous_position = null
+		var zoom = 0.0
+		if ev.button_index == BUTTON_WHEEL_UP:
+			zoom -= 1.0
+		elif ev.button_index == BUTTON_WHEEL_DOWN:
+			zoom += 1.0
+		if zoom != 0.0:
+			$MainView/CameraStand/Camera.translate(Vector3(0.0, 0.0, zoom*(1.0 if ev.shift else 0.1)))
+			update_view()
+		if !ev.pressed and ev.button_index == BUTTON_RIGHT:
+			update_view()
 
 func show_brush(p, op = null):
 	if op == null:
@@ -168,7 +170,14 @@ func paint(p):
 		paint(p)
 
 func update_view():
+	var mesh_instance = $MainView/PaintedMesh
+	var mesh_aabb = mesh_instance.get_aabb()
+	var mesh_center = mesh_aabb.position+0.5*mesh_aabb.size
+	var mesh_size = 0.5*mesh_aabb.size.length()
 	var camera = $MainView/CameraStand/Camera
+	var cam_to_center = (camera.global_transform.origin-mesh_center).length()
+	camera.near = max(1.0, cam_to_center-mesh_size)
+	camera.far = cam_to_center+mesh_size
 	var transform = camera.global_transform.affine_inverse()*$MainView/PaintedMesh.global_transform
 	if painter != null:
 		painter.update_view(camera, transform, $MainView.size)
