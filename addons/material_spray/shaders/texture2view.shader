@@ -65,7 +65,7 @@ void fragment() {
 	if (position.x > -1.0 && position.x < 1.0 && position.y > -1.0 && position.y < 1.0) {
 		float visibility_multiplier = max(visibility(UV.xy, xyz), max(max(visibility(UV.xy, xyz+vec3(0.001, 0.0, 0.0)), visibility(UV.xy, xyz+vec3(-0.0001, 0.0, 0.0))),  max(visibility(UV.xy, xyz+vec3(0.0, 0.001, 0.0)), visibility(UV.xy, xyz+vec3(0.0, -0.0001, 0.0)))));
 		//float visibility_multiplier = visibility(UV.xy, xyz);
-		float normal_multiplier = clamp(5.0*dot(normalize(normal), normalize(position.xyz)), 0.0, 1.0);
+		float normal_multiplier = clamp(dot(normalize(normal), vec3(0.0, 0.0, 1.0)), 0.0, 1.0);
 		visible = normal_multiplier*visibility_multiplier;
 	}
 	ALBEDO = vec3(fix_unshaded(rounded_xyz), visible);
