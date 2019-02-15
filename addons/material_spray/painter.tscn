@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://addons/material_spray/painter.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/shaders/view2texture.shader" type="Shader" id=2]
@@ -8,10 +8,11 @@
 [ext_resource path="res://addons/material_spray/shaders/seams.shader" type="Shader" id=6]
 [ext_resource path="res://addons/material_spray/shaders/apply_seams.shader" type="Shader" id=7]
 [ext_resource path="res://addons/material_spray/shaders/paint.shader" type="Shader" id=8]
-[ext_resource path="res://addons/material_spray/materials/perlin_albedo.png" type="Texture" id=9]
-[ext_resource path="res://addons/material_spray/shaders/init_albedo.shader" type="Shader" id=10]
+[ext_resource path="res://addons/material_spray/shaders/init_albedo.shader" type="Shader" id=9]
+[ext_resource path="res://models/asteroid1_albedo.png" type="Texture" id=10]
 [ext_resource path="res://addons/material_spray/shaders/init_mr.shader" type="Shader" id=11]
-[ext_resource path="res://addons/material_spray/shaders/normal_map.shader" type="Shader" id=12]
+[ext_resource path="res://models/asteroid1_mr.png" type="Texture" id=12]
+[ext_resource path="res://addons/material_spray/shaders/normal_map.shader" type="Shader" id=13]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -27,10 +28,10 @@ shader = ExtResource( 2 )
 [sub_resource type="ShaderMaterial" id=4]
 
 shader = ExtResource( 3 )
-shader_param/model_transform = Transform( 0.799658, 1.49012e-008, 0.600455, 0.582142, 0.245087, -0.77527, -0.147164, 0.969501, 0.195986, 5.51343e-006, 3.23057e-005, -3.30014 )
+shader_param/model_transform = Transform( 0.971338, 5.58794e-009, 0.237702, -0.0142536, 0.9982, 0.0582453, -0.237274, -0.059964, 0.96959, 3.57628e-007, -5.36442e-007, -2.2 )
 shader_param/fovy_degrees = 70.0
-shader_param/z_near = 0.05
-shader_param/z_far = 25.0
+shader_param/z_near = 1.0
+shader_param/z_far = 3.90868
 shader_param/aspect = 1.77115
 shader_param/view2texture = SubResource( 26 )
 
@@ -44,10 +45,10 @@ shader_param/texture_angle = 0.0
 [sub_resource type="ShaderMaterial" id=6]
 
 shader = ExtResource( 5 )
-shader_param/model_transform = Transform( 0.799658, 1.49012e-008, 0.600455, 0.582142, 0.245087, -0.77527, -0.147164, 0.969501, 0.195986, 5.51343e-006, 3.23057e-005, -3.30014 )
+shader_param/model_transform = Transform( 0.971338, 5.58794e-009, 0.237702, -0.0142536, 0.9982, 0.0582453, -0.237274, -0.059964, 0.96959, 3.57628e-007, -5.36442e-007, -2.2 )
 shader_param/fovy_degrees = 70.0
-shader_param/z_near = 0.05
-shader_param/z_far = 25.0
+shader_param/z_near = 1.0
+shader_param/z_far = 3.90868
 shader_param/aspect = 1.77115
 shader_param/view2texture = SubResource( 26 )
 
@@ -89,61 +90,62 @@ shader_param/seams = SubResource( 9 )
 [sub_resource type="ShaderMaterial" id=16]
 
 shader = ExtResource( 8 )
-shader_param/brush_pos = Vector2( 0.594362, 0.495146 )
-shader_param/brush_ppos = Vector2( 0.594362, 0.495146 )
-shader_param/brush_size = Vector2( 0.0922474, 0.163384 )
-shader_param/brush_strength = 0.39
-shader_param/brush_color = Color( 0.921569, 0.772549, 0.576471, 1 )
+shader_param/brush_pos = Vector2( 0.524667, 0.761442 )
+shader_param/brush_ppos = Vector2( 0.213782, 0.288488 )
+shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_strength = 0.5
+shader_param/brush_color = Color( 0.101961, 0.0784314, 0.0470588, 1 )
 shader_param/brush_channelmask = Color( 1, 1, 1, 1 )
 shader_param/pattern_scale = 10.0
-shader_param/texture_angle = 6.93889e-018
-shader_param/stamp_mode = true
+shader_param/texture_angle = 0.0
+shader_param/stamp_mode = false
 shader_param/texture_mask = Color( 1, 1, 1, 1 )
 shader_param/tex2view_tex = SubResource( 27 )
 shader_param/tex2viewlsb_tex = SubResource( 29 )
 shader_param/seams = SubResource( 28 )
-shader_param/brush_texture = ExtResource( 9 )
 
 [sub_resource type="ShaderMaterial" id=17]
 
-shader = ExtResource( 10 )
+shader = ExtResource( 9 )
 shader_param/col = Color( 1, 1, 1, 1 )
+shader_param/tex = ExtResource( 10 )
 
 [sub_resource type="ShaderMaterial" id=18]
 
 shader = ExtResource( 8 )
-shader_param/brush_pos = Vector2( 0.537197, 0.488211 )
-shader_param/brush_ppos = Vector2( 0.537197, 0.488211 )
-shader_param/brush_size = Vector2( 0.0922474, 0.163384 )
-shader_param/brush_strength = 0.39
-shader_param/brush_color = Color( 0.69, 0.07, 0, 1 )
-shader_param/brush_channelmask = Color( 1, 1, 1, 1 )
+shader_param/brush_pos = Vector2( 0.615505, 0.597781 )
+shader_param/brush_ppos = Vector2( 0.615505, 0.597781 )
+shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_strength = 0.5
+shader_param/brush_color = Color( 0.21, 1, 0, 1 )
+shader_param/brush_channelmask = Color( 0, 0, 1, 1 )
 shader_param/pattern_scale = 10.0
-shader_param/texture_angle = 6.93889e-018
-shader_param/stamp_mode = true
+shader_param/texture_angle = 0.0
+shader_param/stamp_mode = false
 shader_param/texture_mask = Color( 0, 0, 0, 1 )
 shader_param/tex2view_tex = SubResource( 27 )
 shader_param/tex2viewlsb_tex = SubResource( 29 )
 shader_param/seams = SubResource( 28 )
-shader_param/brush_texture = ExtResource( 9 )
 
 [sub_resource type="ShaderMaterial" id=19]
 
 shader = ExtResource( 11 )
-shader_param/metallic_mask = Color( 0, 0, 0, 0 )
-shader_param/roughness_mask = Color( 1, 0, 0, 0 )
+shader_param/metallic_mask = Color( 1, 0, 0, 0 )
+shader_param/roughness_mask = Color( 0, 1, 0, 0 )
+shader_param/metallic = ExtResource( 12 )
+shader_param/roughness = ExtResource( 12 )
 
 [sub_resource type="ShaderMaterial" id=20]
 
 shader = ExtResource( 8 )
 shader_param/brush_pos = Vector2( 0.67502, 0.604716 )
 shader_param/brush_ppos = Vector2( 0.67502, 0.604716 )
-shader_param/brush_size = Vector2( 0.0922474, 0.163384 )
-shader_param/brush_strength = 0.39
+shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_strength = 0.5
 shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 1, 1, 1, 1 )
 shader_param/pattern_scale = 10.0
-shader_param/texture_angle = 6.93889e-018
+shader_param/texture_angle = 0.0
 shader_param/stamp_mode = false
 shader_param/texture_mask = Color( 1, 1, 1, 1 )
 shader_param/tex2view_tex = SubResource( 27 )
@@ -152,30 +154,29 @@ shader_param/seams = SubResource( 28 )
 
 [sub_resource type="ShaderMaterial" id=21]
 
-shader = ExtResource( 10 )
+shader = ExtResource( 9 )
 shader_param/col = Color( 0, 0, 0, 1 )
 
 [sub_resource type="ShaderMaterial" id=22]
 
 shader = ExtResource( 8 )
-shader_param/brush_pos = Vector2( 0.574785, 0.463245 )
-shader_param/brush_ppos = Vector2( 0.574785, 0.463245 )
-shader_param/brush_size = Vector2( 0.0922474, 0.163384 )
-shader_param/brush_strength = 0.39
-shader_param/brush_color = Color( 0.65098, 0.65098, 0.65098, 1 )
+shader_param/brush_pos = Vector2( 0.594362, 0.576976 )
+shader_param/brush_ppos = Vector2( 0.594362, 0.576976 )
+shader_param/brush_size = Vector2( 0.0391543, 0.0693481 )
+shader_param/brush_strength = 0.5
+shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 1, 1, 1, 1 )
 shader_param/pattern_scale = 10.0
-shader_param/texture_angle = 6.93889e-018
-shader_param/stamp_mode = true
+shader_param/texture_angle = 0.0
+shader_param/stamp_mode = false
 shader_param/texture_mask = Color( 1, 1, 1, 1 )
 shader_param/tex2view_tex = SubResource( 27 )
 shader_param/tex2viewlsb_tex = SubResource( 29 )
 shader_param/seams = SubResource( 28 )
-shader_param/brush_texture = ExtResource( 9 )
 
 [sub_resource type="ShaderMaterial" id=23]
 
-shader = ExtResource( 10 )
+shader = ExtResource( 9 )
 shader_param/col = Color( 0, 0, 0, 1 )
 
 [sub_resource type="ViewportTexture" id=30]
@@ -184,7 +185,7 @@ flags = 12
 
 [sub_resource type="ShaderMaterial" id=25]
 
-shader = ExtResource( 12 )
+shader = ExtResource( 13 )
 shader_param/epsilon = 0.0078125
 shader_param/seams = SubResource( 28 )
 shader_param/tex = SubResource( 30 )
@@ -392,6 +393,7 @@ margin_right = 2048.0
 margin_bottom = 2048.0
 
 [node name="NormalMap" type="Viewport" parent="."]
+editor/display_folded = true
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true

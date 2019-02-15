@@ -8,18 +8,18 @@
 [sub_resource type="ShaderMaterial" id=1]
 
 shader = ExtResource( 2 )
-shader_param/brush_pos = Vector2( 0.827721, 0.0110957 )
-shader_param/brush_ppos = Vector2( 0.827721, 0.0110957 )
-shader_param/brush_size = Vector2( 0.0579483, 0.102635 )
-shader_param/brush_strength = 0.0
+shader_param/brush_pos = Vector2( 0.859828, 0.203883 )
+shader_param/brush_ppos = Vector2( 0.859828, 0.203883 )
+shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
+shader_param/brush_strength = 0.5
 shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
-shader_param/stamp_mode = false
+shader_param/stamp_mode = 0
 
 [sub_resource type="ShaderMaterial" id=2]
 
 shader = ExtResource( 3 )
-shader_param/brush_size = Vector2( 0.0579483, 0.102635 )
+shader_param/brush_size = Vector2( 0.0488281, 0.0833333 )
 shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
 
@@ -75,15 +75,14 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -222.0
-margin_top = -500.0
+margin_top = -260.0
 alignment = 2
 
 [node name="AMR" type="VBoxContainer" parent="BrushUI"]
 editor/display_folded = true
 margin_left = 113.0
-margin_top = 240.0
 margin_right = 222.0
-margin_bottom = 476.0
+margin_bottom = 236.0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 
@@ -128,7 +127,6 @@ margin_bottom = 188.0
 focus_mode = 0
 max_value = 1.0
 step = 0.01
-ticks_on_borders = true
 focus_mode = 0
 
 [node name="Roughness" type="CheckBox" parent="BrushUI/AMR"]
@@ -151,9 +149,9 @@ focus_mode = 0
 editor/display_folded = true
 visible = false
 margin_left = 113.0
-margin_top = 336.0
+margin_top = 96.0
 margin_right = 222.0
-margin_bottom = 476.0
+margin_bottom = 236.0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 
@@ -192,9 +190,9 @@ size_flags_horizontal = 4
 editor/display_folded = true
 visible = false
 margin_left = 113.0
-margin_top = 336.0
+margin_top = 96.0
 margin_right = 222.0
-margin_bottom = 476.0
+margin_bottom = 236.0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 
@@ -227,9 +225,9 @@ rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 4
 
 [node name="Parameters" type="OptionButton" parent="BrushUI"]
-margin_top = 480.0
+margin_top = 240.0
 margin_right = 222.0
-margin_bottom = 500.0
+margin_bottom = 260.0
 size_flags_horizontal = 8
 size_flags_vertical = 0
 text = "Albedo, Metallic, Roughness"

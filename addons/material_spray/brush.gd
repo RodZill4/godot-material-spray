@@ -26,6 +26,18 @@ func _ready():
 	$BrushUI/Depth/DepthTexture.material = $BrushUI/Depth/DepthTexture.material.duplicate()
 	update_material()
 
+func show_brush(p, op = null):
+	if p == null:
+		$Brush.hide()
+	else:
+		$Brush.show()
+		if op == null:
+			op = p
+		var position = p/rect_size
+		var old_position = op/rect_size
+		brush_material.set_shader_param("brush_pos", position)
+		brush_material.set_shader_param("brush_ppos", old_position)
+
 func edit_brush(s):
 	current_brush.size += s.x*0.1
 	current_brush.size = clamp(current_brush.size, 0.0, 250.0)

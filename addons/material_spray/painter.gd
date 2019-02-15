@@ -53,6 +53,10 @@ var viewport_size
 
 var current_brush = null
 
+const VIEW_TO_TEXTURE_RATIO = 2.0
+
+signal colors_picked(brush)
+
 func _ready():
 	# add View2Texture as input of Texture2View (to ignore non-visible parts of the mesh)
 	texture_to_view_mesh.get_surface_material(0).set_shader_param("view2texture", view_to_texture_viewport.get_texture())
@@ -181,7 +185,7 @@ func update_view(c, t, s):
 
 func update_tex2view():
 	var aspect = viewport_size.x/viewport_size.y
-	view_to_texture_viewport.size = 2.0*viewport_size
+	view_to_texture_viewport.size = VIEW_TO_TEXTURE_RATIO*viewport_size
 	view_to_texture_camera.transform = camera.global_transform
 	view_to_texture_camera.fov = camera.fov
 	view_to_texture_camera.near = camera.near
@@ -251,7 +255,7 @@ func brush_changed(new_brush):
 			depth_material.set_shader_param("brush_size", brush_size_vector)
 			depth_material.set_shader_param("brush_strength", current_brush.strength)
 
-func do_paint(position, prev_position):
+func paint(position, prev_position):
 	if current_brush.has_albedo:
 		albedo_material.set_shader_param("brush_pos", position)
 		albedo_material.set_shader_param("brush_ppos", prev_position)
@@ -277,6 +281,23 @@ func do_paint(position, prev_position):
 		nm_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 		nm_viewport.update_worlds()
 
+func pick_color(position):
+	var view_to_texture_image = view_to_texture_viewport.get_texture().get_data()
+	view_to_texture_image.lock()
+	var position_in_texture = view_to_texture_image.get_pixelv(position*VIEW_TO_TEXTURE_RATIO)
+	position_in_texture = Vector2(position_in_texture.r, position_in_texture.g)
+	var albedo_image = get_albedo_texture().get_data()
+	albedo_image.lock()
+	current_brush.albedo_color = albedo_image.get_pixelv(position_in_texture*albedo_image.get_size())
+	var mr_image = get_mr_texture().get_data()
+	mr_image.lock()
+	var mr = mr_image.get_pixelv(position_in_texture*mr_image.get_size())
+	current_brush.metallic = mr.r
+	current_brush.roughness = mr.g
+	var emission_image = get_emission_texture().get_data()
+	emission_image.lock()
+	current_brush.emission_color = emission_image.get_pixelv(position_in_texture*emission_image.get_size())
+	emit_signal("colors_picked", current_brush)
 
 func get_albedo_texture():
 	return albedo_viewport.get_texture()
