@@ -1,5 +1,5 @@
 tool
-extends ViewportContainer
+extends VBoxContainer
 
 const MODE_FREE         = 0
 const MODE_LINE         = 1
@@ -9,8 +9,6 @@ const MODE_COUNT        = 4
 
 var current_tool = MODE_FREE
 
-var texture_scale = 2.0
-
 var previous_position = null
 var painting = false
 var next_paint_to = null
@@ -19,17 +17,28 @@ var key_rotate = Vector2(0.0, 0.0)
 
 var object_name = null
 
-onready var painter = $Painter
-
-onready var brush = $Brush
-
-const MATERIAL_OPTIONS = [ "none", "bricks", "metal_pattern", "rusted_metal", "wooden_floor" ]
+onready var main_view = $View/MainView
+onready var camera = $View/MainView/CameraStand/Camera
+onready var camera_stand = $View/MainView/CameraStand
+onready var painted_mesh = $View/MainView/PaintedMesh
+onready var painter = $View/Painter
+onready var tools = $View/Tools
+onready var layers = $View/Layers
+onready var brush = $View/Brush
 
 signal update_material
 
+const MENU = [
+	{ menu="File", command="load_project", shortcut="Control+O", description="Load project" },
+	{ menu="File", command="save_project", shortcut="Control+S", description="Save project" },
+	{ menu="File", command="save_project_as", shortcut="Control+Shift+S", description="Save project as..." },
+	{ menu="File" },
+	{ menu="File", command="export_material", shortcut="Control+E", description="Export textures" },
+]
+
 func _ready():
 	# Assign all textures to painted mesh
-	$MainView/PaintedMesh.set_surface_material(0, SpatialMaterial.new())
+	painted_mesh.set_surface_material(0, SpatialMaterial.new())
 	# Updated Texture2View wrt current camera position
 	update_view()
 	# Set size of painted textures
@@ -37,6 +46,62 @@ func _ready():
 	# Disable physics process so we avoid useless updates of tex2view textures
 	set_physics_process(false)
 	set_current_tool(MODE_FREE)
+	for m in $Menu.get_children():
+		var menu = m.get_popup()
+		create_menu(menu, m.name)
+		m.connect("about_to_show", self, "on_menu_about_to_show", [ m.name, menu ])
+
+func create_menu(menu, menu_name):
+	menu.clear()
+	menu.connect("id_pressed", self, "on_menu_item")
+	for i in MENU.size():
+		if MENU[i].has("standalone_only") and MENU[i].standalone_only and Engine.editor_hint:
+			continue
+		if MENU[i].menu != menu_name:
+			continue
+		if MENU[i].has("submenu"):
+			var submenu = PopupMenu.new()
+			var submenu_function = "create_menu_"+MENU[i].submenu
+			if has_method(submenu_function):
+				call(submenu_function, submenu)
+			else:
+				create_menu(submenu, MENU[i].submenu)
+			menu.add_child(submenu)
+			menu.add_submenu_item(MENU[i].description, submenu.get_name())
+		elif MENU[i].has("description"):
+			var shortcut = 0
+			if MENU[i].has("shortcut"):
+				for s in MENU[i].shortcut.split("+"):
+					if s == "Alt":
+						shortcut |= KEY_MASK_ALT
+					elif s == "Control":
+						shortcut |= KEY_MASK_CTRL
+					elif s == "Shift":
+						shortcut |= KEY_MASK_SHIFT
+					else:
+						shortcut |= OS.find_scancode_from_string(s)
+			menu.add_item(MENU[i].description, i, shortcut)
+		else:
+			menu.add_separator()
+	return menu
+
+func on_menu_about_to_show(name, menu):
+	for i in MENU.size():
+		if MENU[i].menu != name:
+			continue
+		if MENU[i].has("submenu"):
+			pass
+		elif MENU[i].has("command"):
+			var command_name = MENU[i].command+"_is_disabled"
+			if has_method(command_name):
+				var is_disabled = call(command_name)
+				menu.set_item_disabled(menu.get_item_index(i), is_disabled)
+
+func on_menu_item(id):
+	if MENU[id].has("command"):
+		var command = MENU[id].command
+		if has_method(command):
+			call(command)
 
 func set_object(o):
 	object_name = o.name
@@ -46,7 +111,7 @@ func set_object(o):
 	if mat == null:
 		mat = SpatialMaterial.new()
 	var new_mat = SpatialMaterial.new()
-	new_mat.albedo_texture = painter.get_albedo_texture()
+	new_mat.albedo_texture = layers.get_albedo_texture()
 	new_mat.metallic = 1.0
 	new_mat.metallic_texture = painter.get_mr_texture()
 	new_mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
@@ -61,29 +126,30 @@ func set_object(o):
 	new_mat.depth_enabled = true
 	new_mat.depth_deep_parallax = true
 	new_mat.depth_texture = painter.get_depth_texture()
-	$MainView/PaintedMesh.mesh = o.mesh
-	$MainView/PaintedMesh.set_surface_material(0, new_mat)
+	painted_mesh.mesh = o.mesh
+	painted_mesh.set_surface_material(0, new_mat)
 	painter.set_mesh(o.mesh)
 	update_view()
 	painter.init_textures(mat)
 
 func set_texture_size(s):
+	layers.set_texture_size(s)
 	painter.set_texture_size(s)
 
 func set_current_tool(m):
 	current_tool = m
 	for i in range(MODE_COUNT):
-		$Tools.get_child(i).pressed = (i == m)
+		tools.get_child(i).pressed = (i == m)
 
 func _physics_process(delta):
-	$MainView/CameraStand.rotate($MainView/CameraStand/Camera.global_transform.basis.x.normalized(), -key_rotate.y*delta)
-	$MainView/CameraStand.rotate(Vector3(0, 1, 0), -key_rotate.x*delta)
+	camera_stand.rotate(camera.global_transform.basis.x.normalized(), -key_rotate.y*delta)
+	camera_stand.rotate(Vector3(0, 1, 0), -key_rotate.x*delta)
 	update_view()
 
 func _input(ev : InputEvent):
 	if ev is InputEventKey:
 		if ev.scancode == KEY_CONTROL:
-			$Brush.show_pattern(ev.pressed)
+			brush.show_pattern(ev.pressed)
 			accept_event()
 		elif ev.scancode == KEY_LEFT or ev.scancode == KEY_RIGHT or ev.scancode == KEY_UP or ev.scancode == KEY_DOWN:
 			var new_key_rotate = Vector2(0.0, 0.0)
@@ -106,7 +172,7 @@ func _input(ev : InputEvent):
 		elif ev.button_index == BUTTON_WHEEL_DOWN:
 			zoom += 1.0
 		if zoom != 0.0:
-			$MainView/CameraStand/Camera.translate(Vector3(0.0, 0.0, zoom*(1.0 if ev.shift else 0.1)))
+			camera.translate(Vector3(0.0, 0.0, zoom*(1.0 if ev.shift else 0.1)))
 			update_view()
 			accept_event()
 
@@ -118,11 +184,11 @@ func _on_MaterialSpray_gui_input(ev : InputEvent):
 			brush.show_brush(ev.position, previous_position)
 		if ev.button_mask & BUTTON_MASK_RIGHT != 0:
 			if ev.shift:
-				$MainView/CameraStand.translate(-0.2*ev.relative.x*$MainView/CameraStand/Camera.transform.basis.x)
-				$MainView/CameraStand.translate(0.2*ev.relative.y*$MainView/CameraStand/Camera.transform.basis.y)
+				camera_stand.translate(-0.2*ev.relative.x*camera.transform.basis.x)
+				camera_stand.translate(0.2*ev.relative.y*camera.transform.basis.y)
 			else:
-				$MainView/CameraStand.rotate($MainView/CameraStand/Camera.global_transform.basis.x.normalized(), -0.01*ev.relative.y)
-				$MainView/CameraStand.rotate(Vector3(0, 1, 0), -0.01*ev.relative.x)
+				camera_stand.rotate(camera.global_transform.basis.x.normalized(), -0.01*ev.relative.y)
+				camera_stand.rotate(Vector3(0, 1, 0), -0.01*ev.relative.x)
 		if ev.button_mask & BUTTON_MASK_LEFT != 0:
 			if ev.control:
 				previous_position = null
@@ -174,17 +240,16 @@ func paint(p):
 		paint(p)
 
 func update_view():
-	var mesh_instance = $MainView/PaintedMesh
+	var mesh_instance = painted_mesh
 	var mesh_aabb = mesh_instance.get_aabb()
 	var mesh_center = mesh_aabb.position+0.5*mesh_aabb.size
 	var mesh_size = 0.5*mesh_aabb.size.length()
-	var camera = $MainView/CameraStand/Camera
 	var cam_to_center = (camera.global_transform.origin-mesh_center).length()
-	camera.near = max(1.0, cam_to_center-mesh_size)
-	camera.far = cam_to_center+mesh_size
-	var transform = camera.global_transform.affine_inverse()*$MainView/PaintedMesh.global_transform
+	camera.near = max(0.2, 0.5*(cam_to_center-mesh_size))
+	camera.far = 2.0*(cam_to_center+mesh_size)
+	var transform = camera.global_transform.affine_inverse()*painted_mesh.global_transform
 	if painter != null:
-		painter.update_view(camera, transform, $MainView.size)
+		painter.update_view(camera, transform, main_view.size)
 
 func _on_resized():
 	update_view()
@@ -193,20 +258,35 @@ func dump_texture(texture, filename):
 	var image = texture.get_data()
 	image.save_png(filename)
 
-func save():
+func show_file_dialog(mode, filter, callback):
 	var dialog = FileDialog.new()
 	add_child(dialog)
 	dialog.rect_min_size = Vector2(500, 500)
 	dialog.access = FileDialog.ACCESS_FILESYSTEM
-	dialog.mode = FileDialog.MODE_SAVE_FILE
-	dialog.add_filter("*.tres;Spatial material")
-	dialog.connect("file_selected", self, "do_save")
+	dialog.mode = mode
+	dialog.add_filter(filter)
+	dialog.connect("file_selected", self, callback)
 	dialog.popup_centered()
 
-func do_save(file_name):
+func load_project():
+	show_file_dialog(FileDialog.MODE_OPEN_FILE, "*.masp;Material Spray project", "do_load_project")
+
+func do_load_project(file_name):
+	layers.load(file_name)
+
+func save_project():
+	show_file_dialog(FileDialog.MODE_SAVE_FILE, "*.masp;Material Spray project", "do_save_project")
+
+func do_save_project(file_name):
+	layers.save(file_name)
+
+func export_material():
+	show_file_dialog(FileDialog.MODE_SAVE_FILE, "*.tres;Spatial material", "do_export_material")
+
+func do_export_material(file_name):
 	var prefix = file_name.replace(".tres", "")
-	var mat = $MainView/PaintedMesh.get_surface_material(0).duplicate()
-	dump_texture(painter.get_albedo_texture(), prefix+"_albedo.png")
+	var mat = painted_mesh.get_surface_material(0).duplicate()
+	dump_texture(layers.get_albedo_texture(), prefix+"_albedo.png")
 	dump_texture(painter.get_mr_texture(), prefix+"_mr.png")
 	dump_texture(painter.get_emission_texture(), prefix+"_emission.png")
 	dump_texture(painter.get_normal_map(), prefix+"_nm.png")
@@ -214,7 +294,6 @@ func do_save(file_name):
 	emit_signal("update_material", { material=mat, material_file=file_name, albedo=prefix+"_albedo.png", mr=prefix+"_mr.png", emission=prefix+"_emission.png", nm=prefix+"_nm.png", depth=prefix+"_depth.png" })
 
 func _on_DebugSelect_item_selected(ID, t):
-	var texture = [$Debug/Texture1, $Debug/Texture2][t]
+	var texture = [$View/Debug/Texture1, $View/Debug/Texture2][t]
 	texture.visible = (ID != 0)
-	texture.texture = $Painter.debug_get_texture(ID)
-
+	texture.texture = painter.debug_get_texture(ID)

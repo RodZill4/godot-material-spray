@@ -1,8 +1,9 @@
 tool
 extends Tree
 
-var selected_item = null
-var brush_count = 0
+var selected_item : TreeItem = null
+var just_selected : bool = true
+var brush_count : int = 0
 
 const DEFAULT_BRUSH = {
 	has_albedo = false,
@@ -35,8 +36,7 @@ func create_brush(brush):
 	new_item.set_text(0, "New brush "+str(brush_count))
 	new_item.set_metadata(0, brush)
 	new_item.set_selectable(0, true)
-	new_item.set_editable(0, true)
-	
+
 func update_brush(brush):
 	var item = get_selected()
 	if item != null:
@@ -57,7 +57,6 @@ func copy_item_into(src, dest):
 	new_item.set_text(0, src.get_text(0))
 	new_item.set_metadata(0, src.get_metadata(0))
 	new_item.set_selectable(0, true)
-	new_item.set_editable(0, true)
 	var i = src.get_children()
 	while i != null:
 		copy_item_into(i, new_item)
@@ -106,7 +105,6 @@ func set_lib(lib, parent = null):
 	else:
 		item = create_item(parent)
 		item.set_selectable(0, true)
-		item.set_editable(0, true)
 	if lib.has("name"):
 		item.set_text(0, lib.name)
 	if lib.has("brush"):
@@ -138,3 +136,14 @@ func get_lib(item = null):
 			lib.children.append(get_lib(child_item))
 			child_item = child_item.get_next()
 	return lib
+
+func _on_Tree_cell_selected():
+	just_selected = true
+	if selected_item != null:
+		selected_item.set_editable(0, false)
+	selected_item = get_selected()
+
+func _on_Tree_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed and just_selected:
+		selected_item.set_editable(0, true)
+		just_selected = false

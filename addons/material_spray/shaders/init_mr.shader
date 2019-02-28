@@ -1,4 +1,5 @@
 shader_type canvas_item;
+render_mode blend_disabled, unshaded;
 
 uniform sampler2D metallic : hint_white;
 uniform vec4      metallic_mask = vec4(1.0, 0.0, 0.0, 0.0);
