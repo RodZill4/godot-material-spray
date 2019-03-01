@@ -41,6 +41,7 @@ var current_brush = null
 const VIEW_TO_TEXTURE_RATIO = 2.0
 
 signal colors_picked(brush)
+signal painted()
 
 func _ready():
 	# add View2Texture as input of Texture2View (to ignore non-visible parts of the mesh)
@@ -101,6 +102,9 @@ func calculate_mask(value : float, channel : int) -> Color:
 func init_albedo_texture(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Texture = null):
 	albedo_viewport.init(color, texture)
 
+func init_emission_texture(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Texture = null):
+	emission_viewport.init(color, texture)
+
 func init_textures(m : SpatialMaterial):
 	init_albedo_texture(m.albedo_color, m.albedo_texture)
 	mr_initrect.show()
@@ -113,9 +117,9 @@ func init_textures(m : SpatialMaterial):
 	mr_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
 	mr_viewport.update_worlds()
 	if m.emission_enabled:
-		emission_viewport.init(m.emission, m.emission_texture)
+		init_emission_texture(m.emission, m.emission_texture)
 	else:
-		emission_viewport.init(Color(0.0, 0.0, 0.0), null)
+		init_emission_texture(Color(0.0, 0.0, 0.0), null)
 	if m.depth_enabled:
 		depth_viewport.init(Color(1.0, 1.0, 1.0), m.depth_texture)
 	else:
@@ -212,22 +216,24 @@ func brush_changed(new_brush):
 			mr_material.set_shader_param("brush_strength", current_brush.strength)
 		depth_viewport.set_brush(current_brush.size, current_brush.strength, viewport_size)
 
-func paint(position, prev_position):
+func paint(position, prev_position, erase):
 	if current_brush.has_albedo:
-		albedo_viewport.paint(position, prev_position)
+		albedo_viewport.paint(position, prev_position, erase)
 	if current_brush.has_metallic or current_brush.has_roughness:
 		mr_material.set_shader_param("brush_pos", position)
 		mr_material.set_shader_param("brush_ppos", prev_position)
 		mr_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 		mr_viewport.update_worlds()
 	if current_brush.has_emission:
-		emission_viewport.paint(position, prev_position)
+		emission_viewport.paint(position, prev_position, erase)
 	if current_brush.has_depth:
-		depth_viewport.paint(position, prev_position)
-		yield(get_tree(), "idle_frame")
-		yield(get_tree(), "idle_frame")
+		depth_viewport.paint(position, prev_position, erase)
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
+	if current_brush.has_depth:
 		nm_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 		nm_viewport.update_worlds()
+	emit_signal("painted")
 
 func pick_color(position):
 	var view_to_texture_image = view_to_texture_viewport.get_texture().get_data()

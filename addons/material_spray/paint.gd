@@ -17,6 +17,7 @@ var key_rotate = Vector2(0.0, 0.0)
 
 var object_name = null
 
+onready var view = $View
 onready var main_view = $View/MainView
 onready var camera = $View/MainView/CameraStand/Camera
 onready var camera_stand = $View/MainView/CameraStand
@@ -25,6 +26,7 @@ onready var painter = $View/Painter
 onready var tools = $View/Tools
 onready var layers = $View/Layers
 onready var brush = $View/Brush
+onready var eraser_button = $View/Tools/Eraser
 
 signal update_material
 
@@ -120,7 +122,7 @@ func set_object(o):
 	new_mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
 	new_mat.emission_enabled = true
 	new_mat.emission = Color(0.0, 0.0, 0.0, 0.0)
-	new_mat.emission_texture = painter.get_emission_texture()
+	new_mat.emission_texture = layers.get_emission_texture()
 	new_mat.normal_enabled = true
 	new_mat.normal_texture = painter.get_normal_map()
 	new_mat.depth_enabled = true
@@ -176,7 +178,8 @@ func _input(ev : InputEvent):
 			update_view()
 			accept_event()
 
-func _on_MaterialSpray_gui_input(ev : InputEvent):
+
+func _on_View_gui_input(ev : InputEvent):
 	if ev is InputEventMouseMotion:
 		if current_tool == MODE_COLOR_PICKER:
 			brush.show_brush(null, null)
@@ -226,9 +229,9 @@ func paint(p):
 	painting = true
 	if previous_position == null:
 		previous_position = p
-	var position = p/rect_size
-	var prev_position = previous_position/rect_size
-	painter.paint(position, prev_position)
+	var position = p/view.rect_size
+	var prev_position = previous_position/view.rect_size
+	painter.paint(position, prev_position, eraser_button.pressed)
 	previous_position = p
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
@@ -288,7 +291,7 @@ func do_export_material(file_name):
 	var mat = painted_mesh.get_surface_material(0).duplicate()
 	dump_texture(layers.get_albedo_texture(), prefix+"_albedo.png")
 	dump_texture(painter.get_mr_texture(), prefix+"_mr.png")
-	dump_texture(painter.get_emission_texture(), prefix+"_emission.png")
+	dump_texture(layers.get_emission_texture(), prefix+"_emission.png")
 	dump_texture(painter.get_normal_map(), prefix+"_nm.png")
 	dump_texture(painter.get_depth_texture(), prefix+"_depth.png")
 	emit_signal("update_material", { material=mat, material_file=file_name, albedo=prefix+"_albedo.png", mr=prefix+"_mr.png", emission=prefix+"_emission.png", nm=prefix+"_nm.png", depth=prefix+"_depth.png" })

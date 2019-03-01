@@ -40,12 +40,10 @@ func init(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Texture = null):
 	yield(get_tree(), "idle_frame")
 	rect.show()
 
-func paint(position, prev_position):
+func paint(position, prev_position, erase):
 	rect.material = paint_material
 	paint_material.set_shader_param("brush_pos", position)
 	paint_material.set_shader_param("brush_ppos", prev_position)
+	paint_material.set_shader_param("erase", erase)
 	render_target_update_mode = Viewport.UPDATE_ONCE
 	update_worlds()
-	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
-

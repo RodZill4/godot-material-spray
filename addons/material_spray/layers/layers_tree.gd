@@ -126,37 +126,38 @@ func _on_layers_changed():
 	var item_list = get_item_list(get_root())
 	emit_signal("layers_changed", item_list)
 
-func load_layers(data : Dictionary, path : String):
+func load_layers(data : Dictionary, path : String, channels : Array):
 	selected_item = null
 	clear()
-	do_load_layers(data, create_item(), path)
+	do_load_layers(data, create_item(), path, channels)
 	get_root().get_children().select(0)
 
-func do_load_layers(data : Dictionary, parent : TreeItem, path : String):
+func do_load_layers(data : Dictionary, parent : TreeItem, path : String, channels : Array):
 	if data.has("children"):
 		for l in data.children:
 			var new_item = create_item(parent)
 			new_item.set_text(0, l.name)
 			new_item.add_button(1, BUTTON_HIDDEN if l.hidden else BUTTON_SHOWN, 0)
-			for c in [ "albedo" ]:
-				new_item.set_meta("albedo", load(path+"/"+l[c]))
+			for c in channels:
+				if l.has(c):
+					new_item.set_meta(c, load(path+"/"+l[c]))
 			new_item.set_editable(0, false)
-			do_load_layers(l, new_item, path)
+			do_load_layers(l, new_item, path, channels)
 
-func save_layers(data : Dictionary, item : TreeItem, layer_index : int, path : String):
+func save_layers(data : Dictionary, item : TreeItem, layer_index : int, path : String, channels : Array):
 	var i : TreeItem = item.get_children()
 	if i != null:
 		data.children = []
 		while i != null:
 			var d = { name=i.get_text(0), hidden=i.get_button(1, 0) != BUTTON_SHOWN }
-			for c in [ "albedo" ]:
+			for c in channels:
 				if i.has_meta(c):
 					var file_name : String = c + "_" + str(layer_index) + ".png"
 					var file_path : String = path + "/" + file_name
 					i.get_meta(c).get_data().save_png(file_path)
 					d[c] = file_name
 					layer_index += 1
-			layer_index = save_layers(d, i, layer_index, path)
+			layer_index = save_layers(d, i, layer_index, path, channels)
 			data.children.append(d)
 			i = i.get_next()
 	return layer_index
