@@ -56,7 +56,12 @@ text = "Save"
 [node name="Albedo" type="Viewport" parent="."]
 usage = 0
 render_target_v_flip = true
-render_target_update_mode = 3
+render_target_update_mode = 0
+
+[node name="Emission" type="Viewport" parent="."]
+usage = 0
+render_target_v_flip = true
+render_target_update_mode = 0
 
 [connection signal="button_pressed" from="VBoxContainer/Tree" to="VBoxContainer/Tree" method="_on_Tree_button_pressed"]
 [connection signal="cell_selected" from="VBoxContainer/Tree" to="VBoxContainer/Tree" method="_on_Tree_cell_selected"]
