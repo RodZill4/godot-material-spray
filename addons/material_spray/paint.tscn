@@ -27,40 +27,40 @@ background_sky = SubResource( 1 )
 [sub_resource type="World" id=3]
 environment = SubResource( 2 )
 
-[sub_resource type="InputEventKey" id=6]
+[sub_resource type="InputEventKey" id=4]
 pressed = true
 scancode = 16777244
+
+[sub_resource type="ShortCut" id=5]
+shortcut = SubResource( 4 )
+
+[sub_resource type="InputEventKey" id=6]
+pressed = true
+scancode = 16777245
 
 [sub_resource type="ShortCut" id=7]
 shortcut = SubResource( 6 )
 
 [sub_resource type="InputEventKey" id=8]
 pressed = true
-scancode = 16777245
+scancode = 16777246
 
 [sub_resource type="ShortCut" id=9]
 shortcut = SubResource( 8 )
 
 [sub_resource type="InputEventKey" id=10]
 pressed = true
-scancode = 16777246
+scancode = 16777247
 
 [sub_resource type="ShortCut" id=11]
 shortcut = SubResource( 10 )
 
 [sub_resource type="InputEventKey" id=12]
 pressed = true
-scancode = 16777247
+scancode = 69
 
 [sub_resource type="ShortCut" id=13]
 shortcut = SubResource( 12 )
-
-[sub_resource type="InputEventKey" id=4]
-pressed = true
-scancode = 69
-
-[sub_resource type="ShortCut" id=5]
-shortcut = SubResource( 4 )
 
 [node name="MaterialSpray" type="VBoxContainer"]
 anchor_right = 1.0
@@ -125,7 +125,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 toggle_mode = true
 pressed = true
-shortcut = SubResource( 7 )
+shortcut = SubResource( 5 )
 texture_normal = ExtResource( 6 )
 texture_pressed = ExtResource( 7 )
 
@@ -134,7 +134,7 @@ margin_left = 36.0
 margin_right = 68.0
 margin_bottom = 32.0
 toggle_mode = true
-shortcut = SubResource( 9 )
+shortcut = SubResource( 7 )
 texture_normal = ExtResource( 8 )
 texture_pressed = ExtResource( 9 )
 
@@ -143,7 +143,7 @@ margin_left = 72.0
 margin_right = 104.0
 margin_bottom = 32.0
 toggle_mode = true
-shortcut = SubResource( 11 )
+shortcut = SubResource( 9 )
 texture_normal = ExtResource( 10 )
 texture_pressed = ExtResource( 11 )
 
@@ -152,7 +152,7 @@ margin_left = 108.0
 margin_right = 140.0
 margin_bottom = 32.0
 toggle_mode = true
-shortcut = SubResource( 13 )
+shortcut = SubResource( 11 )
 texture_normal = ExtResource( 12 )
 texture_pressed = ExtResource( 13 )
 
@@ -167,7 +167,7 @@ margin_left = 153.0
 margin_right = 184.0
 margin_bottom = 32.0
 toggle_mode = true
-shortcut = SubResource( 5 )
+shortcut = SubResource( 13 )
 texture_normal = ExtResource( 14 )
 texture_pressed = ExtResource( 15 )
 

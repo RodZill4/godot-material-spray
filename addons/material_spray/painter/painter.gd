@@ -28,10 +28,6 @@ onready var emission_viewport = $EmissionPaint
 
 onready var depth_viewport = $DepthPaint
 
-onready var nm_viewport = $NormalMap
-onready var nm_rect = $NormalMap/Rect
-onready var nm_material = $NormalMap/Rect.get_material()
-
 var camera
 var transform
 var viewport_size
@@ -54,8 +50,6 @@ func _ready():
 	mr_material.set_shader_param("seams", seams_viewport.get_texture())
 	emission_viewport.set_intermediate_textures(texture_to_view_viewport.get_texture(), texture_to_view_lsb_viewport.get_texture(), seams_viewport.get_texture())
 	depth_viewport.set_intermediate_textures(texture_to_view_viewport.get_texture(), texture_to_view_lsb_viewport.get_texture(), seams_viewport.get_texture())
-	nm_material.set_shader_param("tex", depth_viewport.get_texture())
-	nm_material.set_shader_param("seams", seams_viewport.get_texture())
 	# Add Texture2View as input to seams texture
 	seams_material.set_shader_param("tex", texture_to_view_viewport.get_texture())
 	# Assign all textures to painted mesh
@@ -104,6 +98,9 @@ func init_albedo_texture(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Te
 
 func init_emission_texture(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Texture = null):
 	emission_viewport.init(color, texture)
+	
+func init_depth_texture(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Texture = null):
+	depth_viewport.init(color, texture)
 
 func init_textures(m : SpatialMaterial):
 	init_albedo_texture(m.albedo_color, m.albedo_texture)
@@ -121,15 +118,13 @@ func init_textures(m : SpatialMaterial):
 	else:
 		init_emission_texture(Color(0.0, 0.0, 0.0), null)
 	if m.depth_enabled:
-		depth_viewport.init(Color(1.0, 1.0, 1.0), m.depth_texture)
+		init_depth_texture(Color(1.0, 1.0, 1.0), m.depth_texture)
 	else:
-		depth_viewport.init(Color(0.0, 0.0, 0.0), null)
+		init_depth_texture(Color(0.0, 0.0, 0.0), null)
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	mr_paintrect.show()
 	mr_initrect.hide()
-	nm_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-	nm_viewport.update_worlds()
 
 func set_texture_size(s : float):
 	texture_to_view_viewport.size = Vector2(s, s)
@@ -140,8 +135,6 @@ func set_texture_size(s : float):
 	mr_initrect.rect_size = Vector2(s, s)
 	emission_viewport.set_texture_size(s)
 	depth_viewport.set_texture_size(s)
-	nm_viewport.size = Vector2(s, s)
-	nm_rect.rect_size = Vector2(s, s)
 
 func update_view(c, t, s):
 	camera = c
@@ -230,9 +223,6 @@ func paint(position, prev_position, erase):
 		depth_viewport.paint(position, prev_position, erase)
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
-	if current_brush.has_depth:
-		nm_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-		nm_viewport.update_worlds()
 	emit_signal("painted")
 
 func pick_color(position):
@@ -262,9 +252,6 @@ func get_mr_texture():
 func get_emission_texture():
 	return emission_viewport.get_texture()
 
-func get_normal_map():
-	return nm_viewport.get_texture()
-	
 func get_depth_texture():
 	return depth_viewport.get_texture()
 
@@ -288,6 +275,4 @@ func debug_get_texture(ID):
 		return emission_viewport.get_texture()
 	elif ID == 8:
 		return depth_viewport.get_texture()
-	elif ID == 9:
-		return nm_viewport.get_texture()
 	return null

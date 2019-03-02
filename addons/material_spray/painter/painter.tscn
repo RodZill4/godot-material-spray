@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://addons/material_spray/painter/painter.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/painter/viewtotexture.tres" type="Material" id=2]
@@ -10,23 +10,22 @@
 [ext_resource path="res://addons/material_spray/painter/paint_viewport.gd" type="Script" id=8]
 [ext_resource path="res://addons/material_spray/shaders/paint.shader" type="Shader" id=9]
 [ext_resource path="res://addons/material_spray/shaders/init_mr.shader" type="Shader" id=10]
-[ext_resource path="res://addons/material_spray/shaders/normal_map.shader" type="Shader" id=11]
 
 [sub_resource type="CubeMesh" id=1]
 
 [sub_resource type="CubeMesh" id=2]
 size = Vector3( 1, 1, 1 )
 
-[sub_resource type="ViewportTexture" id=15]
+[sub_resource type="ViewportTexture" id=13]
 
 [sub_resource type="ShaderMaterial" id=4]
 shader = ExtResource( 3 )
-shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
+shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2 )
 shader_param/fovy_degrees = 70.0
-shader_param/z_near = 1.0
-shader_param/z_far = 4.0
-shader_param/aspect = 1.77778
-shader_param/view2texture = SubResource( 15 )
+shader_param/z_near = 3.6
+shader_param/z_far = 14.4
+shader_param/aspect = 1.83214
+shader_param/view2texture = SubResource( 13 )
 
 [sub_resource type="ShaderMaterial" id=5]
 shader = ExtResource( 4 )
@@ -36,28 +35,29 @@ shader_param/texture_angle = 0.0
 
 [sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 5 )
-shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2 )
+shader_param/model_transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.2 )
 shader_param/fovy_degrees = 70.0
-shader_param/z_near = 1.0
-shader_param/z_far = 4.0
-shader_param/aspect = 1.77778
-shader_param/view2texture = SubResource( 15 )
+shader_param/z_near = 3.6
+shader_param/z_far = 14.4
+shader_param/aspect = 1.83214
+shader_param/view2texture = SubResource( 13 )
 
-[sub_resource type="ViewportTexture" id=16]
+[sub_resource type="ViewportTexture" id=14]
 
 [sub_resource type="ShaderMaterial" id=8]
 shader = ExtResource( 6 )
-shader_param/tex = SubResource( 16 )
+shader_param/tex = SubResource( 14 )
 
-[sub_resource type="ViewportTexture" id=17]
+[sub_resource type="ViewportTexture" id=15]
 
-[sub_resource type="ViewportTexture" id=18]
+[sub_resource type="ViewportTexture" id=16]
 
 [sub_resource type="ShaderMaterial" id=11]
 shader = ExtResource( 9 )
 shader_param/brush_pos = Vector2( 0.308536, 0.429958 )
 shader_param/brush_ppos = Vector2( 0.308536, 0.429958 )
-shader_param/brush_size = Vector2( 0.0391543, 0.071736 )
+shader_param/erase = false
+shader_param/brush_size = Vector2( 0.0488281, 0.0868056 )
 shader_param/brush_strength = 0.5
 shader_param/brush_color = Color( 0, 0, 0, 1 )
 shader_param/brush_channelmask = Color( 0, 0, 1, 1 )
@@ -65,22 +65,14 @@ shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
 shader_param/stamp_mode = false
 shader_param/texture_mask = Color( 0, 0, 0, 1 )
-shader_param/tex2view_tex = SubResource( 16 )
-shader_param/tex2viewlsb_tex = SubResource( 18 )
-shader_param/seams = SubResource( 17 )
+shader_param/tex2view_tex = SubResource( 14 )
+shader_param/tex2viewlsb_tex = SubResource( 16 )
+shader_param/seams = SubResource( 15 )
 
 [sub_resource type="ShaderMaterial" id=12]
 shader = ExtResource( 10 )
 shader_param/metallic_mask = Color( 0, 0, 0, 0 )
 shader_param/roughness_mask = Color( 1, 0, 0, 0 )
-
-[sub_resource type="ViewportTexture" id=19]
-
-[sub_resource type="ShaderMaterial" id=14]
-shader = ExtResource( 11 )
-shader_param/epsilon = 0.0078125
-shader_param/seams = SubResource( 17 )
-shader_param/tex = SubResource( 19 )
 
 [node name="Painter" type="Node"]
 script = ExtResource( 1 )
@@ -196,20 +188,4 @@ margin_bottom = 2048.0
 [node name="EmissionPaint" parent="." instance=ExtResource( 7 )]
 
 [node name="DepthPaint" parent="." instance=ExtResource( 7 )]
-
-[node name="NormalMap" type="Viewport" parent="."]
-editor/display_folded = true
-size = Vector2( 2048, 2048 )
-own_world = true
-transparent_bg = true
-disable_3d = true
-usage = 0
-render_target_v_flip = true
-render_target_clear_mode = 1
-render_target_update_mode = 1
-
-[node name="Rect" type="ColorRect" parent="NormalMap"]
-material = SubResource( 14 )
-margin_right = 2048.0
-margin_bottom = 2048.0
 

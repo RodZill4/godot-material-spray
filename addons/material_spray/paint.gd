@@ -16,6 +16,7 @@ var next_paint_to = null
 var key_rotate = Vector2(0.0, 0.0)
 
 var object_name = null
+var project_path = null
 
 onready var view = $View
 onready var main_view = $View/MainView
@@ -107,6 +108,7 @@ func on_menu_item(id):
 
 func set_object(o):
 	object_name = o.name
+	project_path = null
 	var mat = o.get_surface_material(0)
 	if mat == null:
 		mat = o.mesh.surface_get_material(0)
@@ -124,10 +126,10 @@ func set_object(o):
 	new_mat.emission = Color(0.0, 0.0, 0.0, 0.0)
 	new_mat.emission_texture = layers.get_emission_texture()
 	new_mat.normal_enabled = true
-	new_mat.normal_texture = painter.get_normal_map()
+	new_mat.normal_texture = layers.get_normal_map()
 	new_mat.depth_enabled = true
 	new_mat.depth_deep_parallax = true
-	new_mat.depth_texture = painter.get_depth_texture()
+	new_mat.depth_texture = layers.get_depth_texture()
 	painted_mesh.mesh = o.mesh
 	painted_mesh.set_surface_material(0, new_mat)
 	painter.set_mesh(o.mesh)
@@ -177,7 +179,6 @@ func _input(ev : InputEvent):
 			camera.translate(Vector3(0.0, 0.0, zoom*(1.0 if ev.shift else 0.1)))
 			update_view()
 			accept_event()
-
 
 func _on_View_gui_input(ev : InputEvent):
 	if ev is InputEventMouseMotion:
@@ -278,9 +279,14 @@ func do_load_project(file_name):
 	layers.load(file_name)
 
 func save_project():
+	if project_path != null:
+		do_save_project(project_path)
+
+func save_project_as():
 	show_file_dialog(FileDialog.MODE_SAVE_FILE, "*.masp;Material Spray project", "do_save_project")
 
 func do_save_project(file_name):
+	project_path = file_name
 	layers.save(file_name)
 
 func export_material():
@@ -292,8 +298,8 @@ func do_export_material(file_name):
 	dump_texture(layers.get_albedo_texture(), prefix+"_albedo.png")
 	dump_texture(painter.get_mr_texture(), prefix+"_mr.png")
 	dump_texture(layers.get_emission_texture(), prefix+"_emission.png")
-	dump_texture(painter.get_normal_map(), prefix+"_nm.png")
-	dump_texture(painter.get_depth_texture(), prefix+"_depth.png")
+	dump_texture(layers.get_normal_map(), prefix+"_nm.png")
+	dump_texture(layers.get_depth_texture(), prefix+"_depth.png")
 	emit_signal("update_material", { material=mat, material_file=file_name, albedo=prefix+"_albedo.png", mr=prefix+"_mr.png", emission=prefix+"_emission.png", nm=prefix+"_nm.png", depth=prefix+"_depth.png" })
 
 func _on_DebugSelect_item_selected(ID, t):
