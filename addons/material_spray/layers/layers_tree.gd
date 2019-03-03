@@ -130,6 +130,7 @@ func move_item_before(item, target_item):
 func _on_Tree_button_pressed(item : TreeItem, column : int, id : int):
 	item.set_button(column, id, BUTTON_HIDDEN if item.get_button(column, id) == BUTTON_SHOWN else BUTTON_SHOWN)
 	_on_layers_changed()
+	update()
 
 func _on_Tree_cell_selected():
 	just_selected = true
@@ -143,7 +144,7 @@ func _on_Tree_cell_selected():
 	_on_layers_changed()
 
 func _on_Tree_gui_input(event):
-	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed and just_selected:
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT and !event.pressed and selected_item != null and just_selected:
 		selected_item.set_editable(0, true)
 		just_selected = false
 

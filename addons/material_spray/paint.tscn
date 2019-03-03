@@ -115,16 +115,17 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.04372, 0, 1.98915 )
 painter = NodePath("../Painter")
 
 [node name="Tools" type="HBoxContainer" parent="View"]
-editor/display_folded = true
 margin_right = 149.0
 margin_bottom = 32.0
 
 [node name="Free" type="TextureButton" parent="View/Tools"]
 margin_right = 32.0
 margin_bottom = 32.0
+hint_tooltip = "Freehand (F1)"
 size_flags_horizontal = 0
 size_flags_vertical = 0
 toggle_mode = true
+shortcut_in_tooltip = false
 pressed = true
 shortcut = SubResource( 5 )
 texture_normal = ExtResource( 6 )
@@ -134,7 +135,9 @@ texture_pressed = ExtResource( 7 )
 margin_left = 36.0
 margin_right = 68.0
 margin_bottom = 32.0
+hint_tooltip = "Lines (F2)"
 toggle_mode = true
+shortcut_in_tooltip = false
 shortcut = SubResource( 7 )
 texture_normal = ExtResource( 8 )
 texture_pressed = ExtResource( 9 )
@@ -143,7 +146,9 @@ texture_pressed = ExtResource( 9 )
 margin_left = 72.0
 margin_right = 104.0
 margin_bottom = 32.0
+hint_tooltip = "Line Strip (F3)"
 toggle_mode = true
+shortcut_in_tooltip = false
 shortcut = SubResource( 9 )
 texture_normal = ExtResource( 10 )
 texture_pressed = ExtResource( 11 )
@@ -152,7 +157,9 @@ texture_pressed = ExtResource( 11 )
 margin_left = 108.0
 margin_right = 140.0
 margin_bottom = 32.0
+hint_tooltip = "Color Picker (F4)"
 toggle_mode = true
+shortcut_in_tooltip = false
 shortcut = SubResource( 11 )
 texture_normal = ExtResource( 12 )
 texture_pressed = ExtResource( 13 )
@@ -167,7 +174,9 @@ rect_min_size = Vector2( 5, 0 )
 margin_left = 153.0
 margin_right = 184.0
 margin_bottom = 32.0
+hint_tooltip = "Toggler Eraser Mode (E)"
 toggle_mode = true
+shortcut_in_tooltip = false
 shortcut = SubResource( 13 )
 texture_normal = ExtResource( 14 )
 texture_pressed = ExtResource( 15 )
@@ -175,6 +184,7 @@ texture_pressed = ExtResource( 15 )
 [node name="BrushLib" parent="View" instance=ExtResource( 16 )]
 
 [node name="Debug" type="Control" parent="View"]
+editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -600.0

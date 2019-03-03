@@ -1,10 +1,13 @@
 tool
 extends Viewport
 
+export(ShaderMaterial) var paint = preload("res://addons/material_spray/painter/paint.tres")
+
 onready var rect = $Rect
 
 onready var init_material = preload("res://addons/material_spray/painter/init.tres").duplicate(true)
-onready var paint_material = preload("res://addons/material_spray/painter/paint.tres").duplicate(true)
+onready var init_channels_material = preload("res://addons/material_spray/painter/init_channels.tres").duplicate(true)
+onready var paint_material = paint.duplicate(true)
 
 func set_intermediate_textures(tex2view, tex2view_lsb, seams):
 	paint_material.set_shader_param("tex2view_tex", tex2view)
@@ -36,9 +39,20 @@ func init(color : Color = Color(0.0, 0.0, 0.0, 0.0), texture : Texture = null):
 	render_target_update_mode = Viewport.UPDATE_ONCE
 	render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
 	update_worlds()
-	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
-	rect.show()
+
+func init_channels(r_texture, r_mask, g_texture, g_mask, b_texture, b_mask, a_texture, a_mask):
+	rect.material = init_channels_material
+	init_channels_material.set_shader_param("r_tex", r_texture)
+	init_channels_material.set_shader_param("r_mask", r_mask)
+	init_channels_material.set_shader_param("g_tex", g_texture)
+	init_channels_material.set_shader_param("g_mask", g_mask)
+	init_channels_material.set_shader_param("b_tex", b_texture)
+	init_channels_material.set_shader_param("b_mask", b_mask)
+	init_channels_material.set_shader_param("a_tex", a_texture)
+	init_channels_material.set_shader_param("a_mask", a_mask)
+	render_target_update_mode = Viewport.UPDATE_ONCE
+	render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
+	update_worlds()
 
 func paint(position, prev_position, erase):
 	rect.material = paint_material

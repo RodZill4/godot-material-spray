@@ -117,10 +117,10 @@ func set_object(o):
 	var new_mat = SpatialMaterial.new()
 	new_mat.albedo_texture = layers.get_albedo_texture()
 	new_mat.metallic = 1.0
-	new_mat.metallic_texture = painter.get_mr_texture()
+	new_mat.metallic_texture = layers.get_mr_texture()
 	new_mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
 	new_mat.roughness = 1.0
-	new_mat.roughness_texture = painter.get_mr_texture()
+	new_mat.roughness_texture = layers.get_mr_texture()
 	new_mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
 	new_mat.emission_enabled = true
 	new_mat.emission = Color(0.0, 0.0, 0.0, 0.0)
@@ -296,7 +296,7 @@ func do_export_material(file_name):
 	var prefix = file_name.replace(".tres", "")
 	var mat = painted_mesh.get_surface_material(0).duplicate()
 	dump_texture(layers.get_albedo_texture(), prefix+"_albedo.png")
-	dump_texture(painter.get_mr_texture(), prefix+"_mr.png")
+	dump_texture(layers.get_mr_texture(), prefix+"_mr.png")
 	dump_texture(layers.get_emission_texture(), prefix+"_emission.png")
 	dump_texture(layers.get_normal_map(), prefix+"_nm.png")
 	dump_texture(layers.get_depth_texture(), prefix+"_depth.png")

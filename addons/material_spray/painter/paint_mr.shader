@@ -25,7 +25,7 @@ float brush(float v) {
 vec4 pattern_color(vec2 uv) {
 	mat2 texture_rotation = mat2(vec2(cos(texture_angle), sin(texture_angle)), vec2(-sin(texture_angle), cos(texture_angle)));
 	vec2 pattern_uv = pattern_scale*texture_rotation*(vec2(brush_size.y/brush_size.x, 1.0)*(uv - vec2(0.5, 0.5)));
-	return texture(brush_texture, fract(pattern_uv));
+	return texture(brush_texture, fract(pattern_uv)).rgaa;
 }
 
 void fragment() {
@@ -42,25 +42,25 @@ void fragment() {
 	float x = clamp(dot(p-b, bv)/dot(bv, bv), 0.0, 1.0);
 	// Get position in brush
 	vec2 local_uv = p-(b+x*bv);
-	float a;
+	vec2 a;
 	vec4 color;
 	if (stamp_mode) {
 		mat2 texture_rotation = mat2(vec2(cos(texture_angle), sin(texture_angle)), vec2(-sin(texture_angle), cos(texture_angle)));
 		local_uv = texture_rotation*local_uv;
 		vec2 stamp_limit = step(abs(local_uv), vec2(1.0));
-		a = stamp_limit.x*stamp_limit.y;
-		color = texture(brush_texture, 0.5*local_uv+vec2(0.5));
+		a = vec2(stamp_limit.x*stamp_limit.y);
+		color = texture(brush_texture, 0.5*local_uv+vec2(0.5)).rgaa;
 	} else {
-		a = brush(max(0.0, 1.0-length(local_uv)));
+		a = vec2(brush(max(0.0, 1.0-length(local_uv))));
 		color = pattern_color(xy);
 	}
 	color = brush_color*color*texture_mask+brush_color*(vec4(1.0)-texture_mask);
-	a *= color.a*tex2view.z;
+	a *= color.ba*brush_channelmask.ba*tex2view.z;
 	vec4 screen_color = texture(SCREEN_TEXTURE, UV);
 	if (erase) {
-		COLOR = vec4(screen_color.xyz, max(screen_color.a-a, 0.0));
+		COLOR = vec4(screen_color.xy, max(screen_color.ba-a, 0.0));
 	} else {
-		float alpha_sum = min(1.0, a + screen_color.a);
-		COLOR = vec4((color.xyz*a*brush_channelmask.xyz+screen_color.xyz*(vec3(alpha_sum)-a*brush_channelmask.xyz))/alpha_sum, alpha_sum);
+		vec2 alpha_sum = min(vec2(1.0), a + screen_color.ba);
+		COLOR = vec4((color.xy*a*brush_channelmask.xy+screen_color.xy*(alpha_sum-a*brush_channelmask.xy))/alpha_sum, alpha_sum);
 	}
 }
