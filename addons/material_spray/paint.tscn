@@ -115,6 +115,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.04372, 0, 1.98915 )
 painter = NodePath("../Painter")
 
 [node name="Tools" type="HBoxContainer" parent="View"]
+editor/display_folded = true
 margin_right = 149.0
 margin_bottom = 32.0
 
@@ -171,6 +172,8 @@ shortcut = SubResource( 13 )
 texture_normal = ExtResource( 14 )
 texture_pressed = ExtResource( 15 )
 
+[node name="BrushLib" parent="View" instance=ExtResource( 16 )]
+
 [node name="Debug" type="Control" parent="View"]
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -191,19 +194,6 @@ margin_bottom = -21.766
 rect_min_size = Vector2( 256, 256 )
 expand = true
 
-[node name="Texture2" type="TextureRect" parent="View/Debug"]
-visible = false
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -95.4758
-margin_top = -277.406
-margin_right = 160.524
-margin_bottom = -21.4056
-rect_min_size = Vector2( 256, 256 )
-expand = true
-
 [node name="Select1" type="OptionButton" parent="View/Debug"]
 anchor_left = 0.5
 anchor_top = 1.0
@@ -216,6 +206,19 @@ size_flags_horizontal = 0
 text = "None"
 items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null, "Emission", null, false, -1, null, "Depth", null, false, -1, null, "Normal Map", null, false, -1, null ]
 selected = 0
+
+[node name="Texture2" type="TextureRect" parent="View/Debug"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -95.4758
+margin_top = -277.406
+margin_right = 160.524
+margin_bottom = -21.4056
+rect_min_size = Vector2( 256, 256 )
+expand = true
 
 [node name="Select2" type="OptionButton" parent="View/Debug"]
 anchor_left = 0.5
@@ -230,8 +233,6 @@ text = "None"
 items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null, "Emission", null, false, -1, null, "Depth", null, false, -1, null, "Normal Map", null, false, -1, null ]
 selected = 0
 
-[node name="BrushLib" parent="View" instance=ExtResource( 16 )]
-
 [connection signal="gui_input" from="View" to="." method="_on_View_gui_input"]
 [connection signal="resized" from="View" to="View" method="_on_resized"]
 [connection signal="colors_picked" from="View/Painter" to="View/Brush" method="brush_selected"]
@@ -243,6 +244,6 @@ selected = 0
 [connection signal="pressed" from="View/Tools/Strip" to="." method="set_current_tool" binds= [ 2 ]]
 [connection signal="pressed" from="View/Tools/ColorPicker" to="." method="set_current_tool" binds= [ 3 ]]
 [connection signal="pressed" from="View/Tools/Eraser" to="." method="save"]
+[connection signal="brush_selected" from="View/BrushLib" to="View/Brush" method="brush_selected"]
 [connection signal="item_selected" from="View/Debug/Select1" to="." method="_on_DebugSelect_item_selected" binds= [ 0 ]]
 [connection signal="item_selected" from="View/Debug/Select2" to="." method="_on_DebugSelect_item_selected" binds= [ 1 ]]
-[connection signal="brush_selected" from="View/BrushLib" to="View/Brush" method="brush_selected"]

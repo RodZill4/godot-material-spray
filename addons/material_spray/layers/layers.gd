@@ -1,9 +1,9 @@
 tool
-extends Control
+extends VBoxContainer
 
 export(NodePath) var painter = null
 
-onready var tree = $VBoxContainer/Tree
+onready var tree = $Tree
 onready var albedo = $Albedo
 onready var emission = $Emission
 onready var depth = $Depth
@@ -39,9 +39,6 @@ func get_normal_map():
 	
 func get_depth_texture():
 	return depth.get_texture()
-
-func _on_Add_pressed():
-	tree.create_layer()
 
 func _on_Tree_selection_changed(old_selected : TreeItem, new_selected : TreeItem):
 	if painter_node == null:

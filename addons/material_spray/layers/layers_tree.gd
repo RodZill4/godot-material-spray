@@ -42,6 +42,42 @@ func create_layer():
 		target_item = next_item
 	new_item.select(0)
 
+func remove_current():
+	selected_item = null
+	var current_item = get_selected()
+	if current_item != null:
+		current_item.get_parent().remove_child(current_item)
+		current_item = get_root().get_children()
+		if current_item != null:
+			current_item.select(0)
+		_on_layers_changed()
+		update()
+
+func move_current_up():
+	var current = get_selected()
+	if current != null:
+		print("move_current_up")
+		var target = current.get_prev()
+		print(target)
+		if target != null:
+			current.move_to_bottom()
+			move_item_before(current, target)
+			_on_layers_changed()
+			update()
+
+func move_current_down():
+	var current = get_selected()
+	if current != null:
+		print("move_current_down")
+		var target = current.get_next()
+		print(target)
+		if target != null:
+			target = target.get_next()
+			current.move_to_bottom()
+			move_item_before(current, target)
+			_on_layers_changed()
+			update()
+
 func get_drag_data(position : Vector2):
 	return get_selected()
 
@@ -82,11 +118,14 @@ func drop_data(position : Vector2, data):
 				target_item = target_item.get_next()
 		data.get_parent().remove_child(data)
 		if new_item != null:
-			while target_item != new_item:
-				var next_item = target_item.get_next()
-				target_item.move_to_bottom()
-				target_item = next_item
+			move_item_before(new_item, target_item)
 		_on_layers_changed()
+		
+func move_item_before(item, target_item):
+	while target_item != item && target_item != null:
+		var next_item = target_item.get_next()
+		target_item.move_to_bottom()
+		target_item = next_item
 
 func _on_Tree_button_pressed(item : TreeItem, column : int, id : int):
 	item.set_button(column, id, BUTTON_HIDDEN if item.get_button(column, id) == BUTTON_SHOWN else BUTTON_SHOWN)
@@ -161,4 +200,5 @@ func save_layers(data : Dictionary, item : TreeItem, layer_index : int, path : S
 			data.children.append(d)
 			i = i.get_next()
 	return layer_index
+
 
