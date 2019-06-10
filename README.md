@@ -2,21 +2,21 @@ Material Spray is a small addon for the Godot engine that can be used to paint m
 
 ![screenshot](/addons/material_spray/doc/screenshot.png)
 
-To use it:
-1. clone or download this repository and copy the **addons/material_spray** directory into your Godot project
+## Quick start
+
+1. clone or download this repository and copy (or create a symbolic link to) the **addons/material_spray** directory into your Godot project
 2. enable the MaterialSpray extension in your project (using the **Extensions** tab in the **Project->Parameters** window)
 3. select a MeshInstance in any scene of the project and use the MaterialSpray button (see image below) above the 3D view. This will open the MaterialSpray window
 4. in the bottom right corner, the brush can be configured. The channels to be modified can be selected (albedo, metallic and roughness) as well as their color/values. A texture can be selected for albedo (click on the image to be prompted for it) as well as the way it will be used (no texture, stamp and pattern).
 5. select a tool in the top left corner (freehand painting, line, linestrip)
 6. adjust the brush size and hardness by holding the **Shift** key and moving the mouse (left-right for size, up-down for hardness). When in **stamp** mode, up-down rotates the texture. When in **pattern** mode, the pattern can be resized and rotated by holding the **Control** key
-7. and finally, start painting directly your mesh with the left mouse button. The mesh can be rotated with the right mouse button or the arrow keys.
+7. and finally, start painting directly your mesh with the left mouse button. The mesh can be rotated with the right mouse button or the arrow keys. The mesh can also be moved by holding the Shift key and the right mouse button while moving the mouse. The mouse wheel can be used to zoom in and out (hold the shift key to zoom faster).
 
 ![button](/addons/material_spray/doc/button.png)
 
 ## Known problems and limitations
 
-* Only the first surface of a mesh will be painted. Meshs with more than one surface are not tested.
-* The position of the brush is not accurate, espescially on the left and top of the window. This will be fixed once I find out how to use the **keep_3d_linear** Viewport parameter.
+* Only the first surface of a mesh will be painted. Meshs with more than one surface are neither supported nor tested.
 
 ## Why I started this project?
 
