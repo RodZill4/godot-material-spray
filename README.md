@@ -1,6 +1,6 @@
-Material Spray is a small addon for the Godot engine that can be used to paint meshes.
+Material Spray is a small addon for the Godot engine (version 3.1.1 only) that can be used to paint meshes.
 
-![screenshot](/addons/material_spray/doc/screenshot.png)
+![Logo](/addons/material_spray/doc/screenshot.png)
 
 ## Quick start
 
