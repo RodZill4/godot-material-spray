@@ -58,22 +58,35 @@ func assign_material(m):
 	var editor_file_system = get_editor_interface().get_resource_filesystem()
 	editor_file_system.scan()
 	editor_file_system.update_file(m.albedo)
-	editor_file_system.update_file(m.mr)
-	editor_file_system.update_file(m.emission)
 	texture = load(m.albedo)
 	m.material.albedo_texture = texture
+	editor_file_system.update_file(m.mr)
 	texture = load(m.mr)
 	m.material.metallic_texture = texture
 	m.material.roughness_texture = texture
-	texture = load(m.emission)
-	m.material.emission_enabled = true
-	m.material.emission_texture = texture
-	texture = load(m.nm)
-	m.material.normal_enabled = true
-	m.material.normal_texture = texture
-	texture = load(m.depth)
-	m.material.depth_enabled = true
-	m.material.depth_deep_parallax = true
-	m.material.depth_texture = texture
+	if m.has("emission"):
+		editor_file_system.update_file(m.emission)
+		texture = load(m.emission)
+		m.material.emission_enabled = true
+		m.material.emission = Color(1.0, 1.0, 1.0)
+		m.material.emission_operator = SpatialMaterial.EMISSION_OP_MULTIPLY
+		m.material.emission_texture = texture
+	else:
+		m.material.emission_enabled = false
+	if m.has("nm"):
+		editor_file_system.update_file(m.nm)
+		texture = load(m.nm)
+		m.material.normal_enabled = true
+		m.material.normal_texture = texture
+	else:
+		m.material.normal_enabled = false
+	if m.has("depth"):
+		editor_file_system.update_file(m.depth)
+		texture = load(m.depth)
+		m.material.depth_enabled = true
+		m.material.depth_deep_parallax = true
+		m.material.depth_texture = texture
+	else:
+		m.material.depth_enabled = false
 	ResourceSaver.save(m.material_file, m.material)
 	edited_object.set_surface_material(0, m.material)

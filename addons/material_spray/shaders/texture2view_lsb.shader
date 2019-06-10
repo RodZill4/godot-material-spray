@@ -44,6 +44,7 @@ void vertex() {
 }
 
 vec2 fix_unshaded(vec2 xy) {
+	return xy;
     return mix(pow((xy+vec2(0.055))/vec2(1.055), vec2(2.4)), xy/vec2(12.92), lessThan(xy, vec2(0.0031308*12.92)));
 }
 

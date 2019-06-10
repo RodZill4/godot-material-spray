@@ -166,6 +166,24 @@ func _on_layers_changed():
 	var item_list = get_item_list(get_root())
 	emit_signal("layers_changed", item_list)
 
+# resize
+
+func resize_layers(item : TreeItem, channels : Array, size : int):
+	var i : TreeItem = item.get_children()
+	if i != null:
+		while i != null:
+			var d = { name=i.get_text(0), hidden=i.get_button(1, 0) != BUTTON_SHOWN }
+			for c in channels:
+				if i.has_meta(c):
+					var texture = i.get_meta(c)
+					var image = texture.get_data()
+					image.resize(size, size)
+					texture.set_data(image)
+			resize_layers(i, channels, size)
+			i = i.get_next()
+
+# load/save
+
 func load_layers(data : Dictionary, path : String, channels : Array):
 	selected_item = null
 	clear()

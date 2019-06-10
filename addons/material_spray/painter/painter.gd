@@ -103,7 +103,9 @@ func init_textures(m : SpatialMaterial):
 	init_albedo_texture(m.albedo_color, m.albedo_texture)
 	init_mr_texture_channels(m.metallic, m.metallic_texture, m.metallic_texture_channel, m.roughness, m.roughness_texture, m.roughness_texture_channel)
 	if m.emission_enabled:
-		init_emission_texture(m.emission, m.emission_texture)
+		var emission_color = m.emission
+		emission_color.a = 1.0
+		init_emission_texture(emission_color, m.emission_texture)
 	else:
 		init_emission_texture(Color(0.0, 0.0, 0.0), null)
 	if m.depth_enabled:
@@ -235,21 +237,24 @@ func get_depth_texture():
 func save_viewport(v : Viewport, f : String):
 	v.get_texture().get_data().save_png(f)
 
+func debug_get_texture_names():
+	return [ "View to texture", "Texture to view", "Texture to view (LSB)", "Seams", "Albedo (current layer)", "Metallic/Roughness (current layer)", "Emission (current layer)", "Depth (current layer)" ]
+
 func debug_get_texture(ID):
-	if ID == 1:
+	if ID == 0:
 		return view_to_texture_viewport.get_texture()
-	elif ID == 2:
+	elif ID == 1:
 		return texture_to_view_viewport.get_texture()
-	elif ID == 3:
+	elif ID == 2:
 		return texture_to_view_lsb_viewport.get_texture()
-	elif ID == 4:
+	elif ID == 3:
 		return seams_viewport.get_texture()
-	elif ID == 5:
+	elif ID == 4:
 		return albedo_viewport.get_texture()
-	elif ID == 6:
+	elif ID == 5:
 		return mr_viewport.get_texture()
-	elif ID == 7:
+	elif ID == 6:
 		return emission_viewport.get_texture()
-	elif ID == 8:
+	elif ID == 7:
 		return depth_viewport.get_texture()
 	return null

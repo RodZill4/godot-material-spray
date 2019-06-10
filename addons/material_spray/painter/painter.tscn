@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://addons/material_spray/painter/painter.gd" type="Script" id=1]
 [ext_resource path="res://addons/material_spray/painter/viewtotexture.tres" type="Material" id=2]
@@ -7,7 +7,8 @@
 [ext_resource path="res://addons/material_spray/shaders/texture2view_lsb.shader" type="Shader" id=5]
 [ext_resource path="res://addons/material_spray/shaders/seams.shader" type="Shader" id=6]
 [ext_resource path="res://addons/material_spray/painter/paint_viewport.tscn" type="PackedScene" id=7]
-[ext_resource path="res://addons/material_spray/painter/paint_mr.tres" type="Material" id=8]
+[ext_resource path="res://addons/material_spray/painter/paint.tres" type="Material" id=8]
+[ext_resource path="res://addons/material_spray/painter/paint_mr.tres" type="Material" id=9]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -18,10 +19,10 @@ size = Vector3( 1, 1, 1 )
 
 [sub_resource type="ShaderMaterial" id=4]
 shader = ExtResource( 3 )
-shader_param/model_transform = Transform( -0.995162, 3.72529e-009, 0.0982478, 0.0763456, 0.629411, 0.773313, -0.0618383, 0.777072, -0.626366, -8.04663e-007, 5.126e-006, -2.4 )
+shader_param/model_transform = Transform( 0.0107968, 1.11759e-008, -0.999942, -0.841422, 0.540301, -0.00908521, 0.54027, 0.841472, 0.00583355, 7.63617, 14.2108, -56.3953 )
 shader_param/fovy_degrees = 70.0
-shader_param/z_near = 0.299335
-shader_param/z_far = 8.49995
+shader_param/z_near = 0.2
+shader_param/z_far = 248.925
 shader_param/aspect = 1.83214
 shader_param/view2texture = SubResource( 9 )
 
@@ -33,10 +34,10 @@ shader_param/texture_angle = 0.0
 
 [sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 5 )
-shader_param/model_transform = Transform( -0.995162, 3.72529e-009, 0.0982478, 0.0763456, 0.629411, 0.773313, -0.0618383, 0.777072, -0.626366, -8.04663e-007, 5.126e-006, -2.4 )
+shader_param/model_transform = Transform( 0.0107968, 1.11759e-008, -0.999942, -0.841422, 0.540301, -0.00908521, 0.54027, 0.841472, 0.00583355, 7.63617, 14.2108, -56.3953 )
 shader_param/fovy_degrees = 70.0
-shader_param/z_near = 0.299335
-shader_param/z_far = 8.49995
+shader_param/z_near = 0.2
+shader_param/z_far = 248.925
 shader_param/aspect = 1.83214
 shader_param/view2texture = SubResource( 9 )
 
@@ -126,11 +127,13 @@ margin_right = 2048.0
 margin_bottom = 2048.0
 
 [node name="AlbedoPaint" parent="." instance=ExtResource( 7 )]
-
-[node name="MRPaint" parent="." instance=ExtResource( 7 )]
 paint = ExtResource( 8 )
 
+[node name="MRPaint" parent="." instance=ExtResource( 7 )]
+paint = ExtResource( 9 )
+
 [node name="EmissionPaint" parent="." instance=ExtResource( 7 )]
+paint = ExtResource( 8 )
 
 [node name="DepthPaint" parent="." instance=ExtResource( 7 )]
-
+paint = ExtResource( 8 )

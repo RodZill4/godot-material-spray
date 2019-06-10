@@ -24,4 +24,3 @@ shader_param/texture_mask = Color( 1, 1, 1, 1 )
 shader_param/tex2view_tex = SubResource( 2 )
 shader_param/tex2viewlsb_tex = SubResource( 3 )
 shader_param/seams = SubResource( 1 )
-

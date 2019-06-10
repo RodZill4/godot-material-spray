@@ -78,6 +78,13 @@ margin_bottom = 20.0
 text = "File"
 items = [ "Load project", null, 0, false, false, 0, 268435535, null, "", false, "Save project", null, 0, false, false, 1, 268435539, null, "", false, "Save project as...", null, 0, false, false, 2, 301989971, null, "", false, "", null, 0, false, false, -1, 0, null, "", true, "Export textures", null, 0, false, false, 4, 268435525, null, "", false ]
 
+[node name="Material" type="MenuButton" parent="Menu"]
+margin_left = 39.0
+margin_right = 103.0
+margin_bottom = 20.0
+text = "Material"
+items = [ "Emission", null, 1, false, false, 5, 0, null, "", false, "Normal", null, 1, false, false, 6, 0, null, "", false, "Depth", null, 1, false, false, 7, 0, null, "", false, "Texture Size", null, 0, false, false, -1, 0, null, "MaterialTextureSize", false ]
+
 [node name="View" type="ViewportContainer" parent="."]
 margin_top = 24.0
 margin_right = 1024.0
@@ -87,7 +94,6 @@ size_flags_vertical = 3
 stretch = true
 
 [node name="MainView" type="Viewport" parent="View"]
-editor/display_folded = true
 size = Vector2( 1024, 576 )
 world = SubResource( 3 )
 handle_input_locally = false
@@ -184,7 +190,6 @@ texture_pressed = ExtResource( 15 )
 [node name="BrushLib" parent="View" instance=ExtResource( 16 )]
 
 [node name="Debug" type="Control" parent="View"]
-editor/display_folded = true
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_top = -600.0
@@ -214,7 +219,7 @@ margin_top = -20.0
 margin_right = -181.799
 size_flags_horizontal = 0
 text = "None"
-items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null, "Emission", null, false, -1, null, "Depth", null, false, -1, null, "Normal Map", null, false, -1, null ]
+items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo (current layer)", null, false, 5, null, "Metallic/Roughness (current layer)", null, false, 6, null, "Emission (current layer)", null, false, 7, null, "Depth (current layer)", null, false, 8, null, "Albedo", null, false, 9, null, "Metallic", null, false, 10, null, "Roughness", null, false, 11, null, "Metallic/Roughness", null, false, 12, null, "Emission", null, false, 13, null, "Normal map", null, false, 14, null, "Depth", null, false, 15, null ]
 selected = 0
 
 [node name="Texture2" type="TextureRect" parent="View/Debug"]
@@ -240,9 +245,8 @@ margin_top = -20.0
 margin_right = 66.4798
 size_flags_horizontal = 0
 text = "None"
-items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo", null, false, 5, null, "Metallic/Roughness", null, false, 6, null, "Emission", null, false, -1, null, "Depth", null, false, -1, null, "Normal Map", null, false, -1, null ]
+items = [ "None", null, false, 0, null, "View to texture", null, false, 1, null, "Texture to view", null, false, 2, null, "Texture to view (LSB)", null, false, 3, null, "Seams", null, false, 4, null, "Albedo (current layer)", null, false, 5, null, "Metallic/Roughness (current layer)", null, false, 6, null, "Emission (current layer)", null, false, 7, null, "Depth (current layer)", null, false, 8, null, "Albedo", null, false, 9, null, "Metallic", null, false, 10, null, "Roughness", null, false, 11, null, "Metallic/Roughness", null, false, 12, null, "Emission", null, false, 13, null, "Normal map", null, false, 14, null, "Depth", null, false, 15, null ]
 selected = 0
-
 [connection signal="gui_input" from="View" to="." method="_on_View_gui_input"]
 [connection signal="resized" from="View" to="View" method="_on_resized"]
 [connection signal="colors_picked" from="View/Painter" to="View/Brush" method="brush_selected"]

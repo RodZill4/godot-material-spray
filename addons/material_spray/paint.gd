@@ -9,6 +9,8 @@ const MODE_COUNT        = 4
 
 var current_tool = MODE_FREE
 
+var preview_material = null
+
 var previous_position = null
 var painting = false
 var next_paint_to = null
@@ -37,6 +39,14 @@ const MENU = [
 	{ menu="File", command="save_project_as", shortcut="Control+Shift+S", description="Save project as..." },
 	{ menu="File" },
 	{ menu="File", command="export_material", shortcut="Control+E", description="Export textures" },
+	{ menu="Material", command="toggle_material_feature", description="Emission", command_parameter="emission_enabled" },
+	{ menu="Material", command="toggle_material_feature", description="Normal", command_parameter="normal_enabled" },
+	{ menu="Material", command="toggle_material_feature", description="Depth", command_parameter="depth_enabled" },
+	{ menu="Material", submenu="MaterialTextureSize", description="Texture Size" },
+	{ menu="MaterialTextureSize", command="set_texture_size", description="256x256", command_parameter=256  },
+	{ menu="MaterialTextureSize", command="set_texture_size", description="512x512", command_parameter=512  },
+	{ menu="MaterialTextureSize", command="set_texture_size", description="1024x1024", command_parameter=1024  },
+	{ menu="MaterialTextureSize", command="set_texture_size", description="2048x2048", command_parameter=2048  },
 ]
 
 func _ready():
@@ -45,7 +55,7 @@ func _ready():
 	# Updated Texture2View wrt current camera position
 	update_view()
 	# Set size of painted textures
-	set_texture_size(2048)
+	layers.set_texture_size(256)
 	# Disable physics process so we avoid useless updates of tex2view textures
 	set_physics_process(false)
 	set_current_tool(MODE_FREE)
@@ -53,6 +63,7 @@ func _ready():
 		var menu = m.get_popup()
 		create_menu(menu, m.name)
 		m.connect("about_to_show", self, "on_menu_about_to_show", [ m.name, menu ])
+	initialize_debug_selects()
 
 func create_menu(menu, menu_name):
 	menu.clear()
@@ -64,6 +75,8 @@ func create_menu(menu, menu_name):
 			continue
 		if MENU[i].has("submenu"):
 			var submenu = PopupMenu.new()
+			submenu.name = MENU[i].submenu
+			print(submenu.name)
 			var submenu_function = "create_menu_"+MENU[i].submenu
 			if has_method(submenu_function):
 				call(submenu_function, submenu)
@@ -83,7 +96,10 @@ func create_menu(menu, menu_name):
 						shortcut |= KEY_MASK_SHIFT
 					else:
 						shortcut |= OS.find_scancode_from_string(s)
-			menu.add_item(MENU[i].description, i, shortcut)
+			if has_method(MENU[i].command+"_is_checked"):
+				menu.add_check_item(MENU[i].description, i, shortcut)
+			else:
+				menu.add_item(MENU[i].description, i, shortcut)
 		else:
 			menu.add_separator()
 	return menu
@@ -93,18 +109,33 @@ func on_menu_about_to_show(name, menu):
 		if MENU[i].menu != name:
 			continue
 		if MENU[i].has("submenu"):
-			pass
+			on_menu_about_to_show(MENU[i].submenu, menu.get_node(MENU[i].submenu))
 		elif MENU[i].has("command"):
 			var command_name = MENU[i].command+"_is_disabled"
 			if has_method(command_name):
-				var is_disabled = call(command_name)
+				var is_disabled
+				if MENU[i].has("command_parameter"):
+					is_disabled = call(command_name, MENU[i].command_parameter)
+				else:
+					is_disabled = call(command_name)
 				menu.set_item_disabled(menu.get_item_index(i), is_disabled)
+			command_name = MENU[i].command+"_is_checked"
+			if has_method(command_name):
+				var is_checked
+				if MENU[i].has("command_parameter"):
+					is_checked = call(command_name, MENU[i].command_parameter)
+				else:
+					is_checked = call(command_name)
+				menu.set_item_checked(menu.get_item_index(i), is_checked)
 
 func on_menu_item(id):
 	if MENU[id].has("command"):
-		var command = MENU[id].command
-		if has_method(command):
-			call(command)
+		var command_name = MENU[id].command
+		if has_method(command_name):
+			if MENU[id].has("command_parameter"):
+				call(command_name, MENU[id].command_parameter)
+			else:
+				call(command_name)
 
 func set_object(o):
 	object_name = o.name
@@ -114,31 +145,45 @@ func set_object(o):
 		mat = o.mesh.surface_get_material(0)
 	if mat == null:
 		mat = SpatialMaterial.new()
-	var new_mat = SpatialMaterial.new()
-	new_mat.albedo_texture = layers.get_albedo_texture()
-	new_mat.metallic = 1.0
-	new_mat.metallic_texture = layers.get_mr_texture()
-	new_mat.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
-	new_mat.roughness = 1.0
-	new_mat.roughness_texture = layers.get_mr_texture()
-	new_mat.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
-	new_mat.emission_enabled = true
-	new_mat.emission = Color(0.0, 0.0, 0.0, 0.0)
-	new_mat.emission_texture = layers.get_emission_texture()
-	new_mat.normal_enabled = true
-	new_mat.normal_texture = layers.get_normal_map()
-	new_mat.depth_enabled = true
-	new_mat.depth_deep_parallax = true
-	new_mat.depth_texture = layers.get_depth_texture()
+	for t in [ "albedo_texture", "metallic_texture", "roughness_texture" ]:
+		if mat[t] != null:
+			var size = mat[t].get_size()
+			if size.x == size.y:
+				layers.set_texture_size(size.x)
+				break
+	preview_material = SpatialMaterial.new()
+	preview_material.albedo_texture = layers.get_albedo_texture()
+	preview_material.metallic = 1.0
+	preview_material.metallic_texture = layers.get_mr_texture()
+	preview_material.metallic_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_RED
+	preview_material.roughness = 1.0
+	preview_material.roughness_texture = layers.get_mr_texture()
+	preview_material.roughness_texture_channel = SpatialMaterial.TEXTURE_CHANNEL_GREEN
+	preview_material.emission_enabled = true
+	preview_material.emission = Color(0.0, 0.0, 0.0, 0.0)
+	preview_material.emission_texture = layers.get_emission_texture()
+	preview_material.normal_enabled = true
+	preview_material.normal_texture = layers.get_normal_map()
+	preview_material.depth_enabled = true
+	preview_material.depth_deep_parallax = true
+	preview_material.depth_texture = layers.get_depth_texture()
 	painted_mesh.mesh = o.mesh
-	painted_mesh.set_surface_material(0, new_mat)
+	painted_mesh.set_surface_material(0, preview_material)
 	painter.set_mesh(o.mesh)
 	update_view()
 	painter.init_textures(mat)
 
+func toggle_material_feature(variable):
+	preview_material[variable] = !preview_material[variable]
+	
+func toggle_material_feature_is_checked(variable):
+	return preview_material[variable]
+
 func set_texture_size(s):
 	layers.set_texture_size(s)
-	painter.set_texture_size(s)
+
+func set_texture_size_is_checked(s):
+	return s == layers.texture_size
 
 func set_current_tool(m):
 	current_tool = m
@@ -272,22 +317,31 @@ func show_file_dialog(mode, filter, callback):
 	dialog.connect("file_selected", self, callback)
 	dialog.popup_centered()
 
+func set_project_path(p):
+	project_path = p
+	var parent = get_parent()
+	if parent.has_method("set_project_path"):
+		parent.set_project_path(p)
+
 func load_project():
 	show_file_dialog(FileDialog.MODE_OPEN_FILE, "*.masp;Material Spray project", "do_load_project")
 
 func do_load_project(file_name):
 	layers.load(file_name)
+	set_project_path(file_name)
 
 func save_project():
 	if project_path != null:
 		do_save_project(project_path)
+	else:
+		save_project_as()
 
 func save_project_as():
 	show_file_dialog(FileDialog.MODE_SAVE_FILE, "*.masp;Material Spray project", "do_save_project")
 
 func do_save_project(file_name):
-	project_path = file_name
 	layers.save(file_name)
+	set_project_path(file_name)
 
 func export_material():
 	show_file_dialog(FileDialog.MODE_SAVE_FILE, "*.tres;Spatial material", "do_export_material")
@@ -295,14 +349,47 @@ func export_material():
 func do_export_material(file_name):
 	var prefix = file_name.replace(".tres", "")
 	var mat = painted_mesh.get_surface_material(0).duplicate()
+	var desc = { material=mat, material_file=file_name }
 	dump_texture(layers.get_albedo_texture(), prefix+"_albedo.png")
+	desc.albedo = prefix+"_albedo.png"
 	dump_texture(layers.get_mr_texture(), prefix+"_mr.png")
-	dump_texture(layers.get_emission_texture(), prefix+"_emission.png")
-	dump_texture(layers.get_normal_map(), prefix+"_nm.png")
-	dump_texture(layers.get_depth_texture(), prefix+"_depth.png")
-	emit_signal("update_material", { material=mat, material_file=file_name, albedo=prefix+"_albedo.png", mr=prefix+"_mr.png", emission=prefix+"_emission.png", nm=prefix+"_nm.png", depth=prefix+"_depth.png" })
+	desc.mr = prefix+"_mr.png"
+	if mat.emission_enabled:
+		dump_texture(layers.get_emission_texture(), prefix+"_emission.png")
+		desc.emission = prefix+"_emission.png"
+	if mat.normal_enabled:
+		dump_texture(layers.get_normal_map(), prefix+"_nm.png")
+		desc.nm = prefix+"_nm.png"
+	if mat.depth_enabled:
+		dump_texture(layers.get_depth_texture(), prefix+"_depth.png")
+		desc.depth = prefix+"_depth.png"
+	emit_signal("update_material", desc)
+
+# debug
+
+func debug_get_texture_names():
+	return [ "None" ]
+
+func debug_get_texture(ID):
+	return null
+
+func initialize_debug_selects():
+	for s in [ $View/Debug/Select1, $View/Debug/Select2 ]:
+		s.clear()
+		var index = 0
+		for p in [ self, $View/Painter, $View/Layers ]:
+			for i in p.debug_get_texture_names():
+				s.add_item(i, index)
+				index += 1
 
 func _on_DebugSelect_item_selected(ID, t):
 	var texture = [$View/Debug/Texture1, $View/Debug/Texture2][t]
-	texture.visible = (ID != 0)
-	texture.texture = painter.debug_get_texture(ID)
+	for p in [ self, $View/Painter, $View/Layers ]:
+		var textures_count = p.debug_get_texture_names().size()
+		if ID < textures_count:
+			texture.texture = p.debug_get_texture(ID)
+			texture.visible = (texture.texture != null)
+			if texture.texture != null:
+				print(texture.texture.get_size())
+			return
+		ID -= textures_count
