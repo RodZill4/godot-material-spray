@@ -33,8 +33,7 @@ void fragment() {
 	vec2 uv = UV+(texture(seams, UV).xy-vec2(0.5))/64.0;
 	// Get View position
 	vec4 tex2view = texture(tex2view_tex, uv);
-	vec4 tex2viewlsb = texture(tex2viewlsb_tex, uv);
-	vec2 xy = tex2view.xy+tex2viewlsb.xy/255.0;
+	vec2 xy = tex2view.xy;
 	// Get distance to brush center
 	vec2 b = brush_pos/brush_size;
 	vec2 bv = (brush_ppos-brush_pos)/brush_size;

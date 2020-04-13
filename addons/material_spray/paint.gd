@@ -237,7 +237,7 @@ func _on_View_gui_input(ev : InputEvent):
 				camera_stand.translate(0.2*ev.relative.y*camera.transform.basis.y)
 			else:
 				camera_stand.rotate(camera.global_transform.basis.x.normalized(), -0.01*ev.relative.y)
-				camera_stand.rotate(Vector3(0, 1, 0), -0.01*ev.relative.x)
+				camera_stand.rotate(camera.global_transform.basis.y.normalized(), -0.01*ev.relative.x)
 		if ev.button_mask & BUTTON_MASK_LEFT != 0:
 			if ev.control:
 				previous_position = null

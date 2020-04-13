@@ -52,16 +52,10 @@ float visibility(vec2 uv, vec3 view_pos) {
 	*/
 }
 
-vec2 fix_unshaded(vec2 xy) {
-	return xy;
-	return mix(pow((xy+vec2(0.055))/vec2(1.055), vec2(2.4)), xy/vec2(12.92), lessThan(xy, vec2(0.0031308*12.92)));
-}
-
 void fragment() {
 	vec4 position = get_projection_matrix()*vec4(global_position.xyz, 1.0);
 	position.xyz /= position.w;
 	vec3 xyz = vec3(0.5-0.5*position.x, 0.5+0.5*position.y, z_near + (z_far - z_near)*position.z);
-	vec2 rounded_xyz = floor(xyz.xy*255.0)/255.0;
 	float visible = 0.0;
 	if (position.x > -1.0 && position.x < 1.0 && position.y > -1.0 && position.y < 1.0) {
 		float visibility_multiplier = max(visibility(UV.xy, xyz), max(max(visibility(UV.xy, xyz+vec3(0.001, 0.0, 0.0)), visibility(UV.xy, xyz+vec3(-0.0001, 0.0, 0.0))),  max(visibility(UV.xy, xyz+vec3(0.0, 0.001, 0.0)), visibility(UV.xy, xyz+vec3(0.0, -0.0001, 0.0)))));
@@ -69,5 +63,5 @@ void fragment() {
 		float normal_multiplier = clamp(dot(normalize(normal), vec3(0.0, 0.0, 1.0)), 0.0, 1.0);
 		visible = normal_multiplier*visibility_multiplier;
 	}
-	ALBEDO = vec3(fix_unshaded(rounded_xyz), visible);
+	ALBEDO = vec3(xyz.xy, visible);
 }

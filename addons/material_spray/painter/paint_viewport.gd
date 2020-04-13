@@ -9,9 +9,8 @@ onready var init_material = preload("res://addons/material_spray/painter/init.tr
 onready var init_channels_material = preload("res://addons/material_spray/painter/init_channels.tres").duplicate(true)
 onready var paint_material = paint.duplicate(true)
 
-func set_intermediate_textures(tex2view, tex2view_lsb, seams):
+func set_intermediate_textures(tex2view, seams):
 	paint_material.set_shader_param("tex2view_tex", tex2view)
-	paint_material.set_shader_param("tex2viewlsb_tex", tex2view_lsb)
 	paint_material.set_shader_param("seams", seams)
 
 func set_texture_size(s : float):

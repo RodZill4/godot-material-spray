@@ -83,7 +83,7 @@ margin_left = 39.0
 margin_right = 103.0
 margin_bottom = 20.0
 text = "Material"
-items = [ "Emission", null, 1, false, false, 5, 0, null, "", false, "Normal", null, 1, false, false, 6, 0, null, "", false, "Depth", null, 1, false, false, 7, 0, null, "", false, "Texture Size", null, 0, false, false, -1, 0, null, "MaterialTextureSize", false ]
+items = [ "Emission", null, 1, false, false, 5, 0, null, "", false, "Normal", null, 1, false, false, 6, 0, null, "", false, "Depth", null, 1, false, false, 7, 0, null, "", false, "Texture Size", null, 0, false, false, 3, 0, null, "MaterialTextureSize", false ]
 
 [node name="View" type="ViewportContainer" parent="."]
 margin_top = 24.0
@@ -100,7 +100,6 @@ handle_input_locally = false
 render_target_update_mode = 3
 
 [node name="CameraStand" type="Spatial" parent="View/MainView"]
-editor/display_folded = true
 
 [node name="Camera" type="Camera" parent="View/MainView/CameraStand"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
@@ -251,8 +250,8 @@ selected = 0
 [connection signal="resized" from="View" to="View" method="_on_resized"]
 [connection signal="colors_picked" from="View/Painter" to="View/Brush" method="brush_selected"]
 [connection signal="painted" from="View/Painter" to="View/Layers" method="_on_Painter_painted"]
-[connection signal="brush_changed" from="View/Brush" to="View/BrushLib" method="brush_changed"]
 [connection signal="brush_changed" from="View/Brush" to="View/Painter" method="brush_changed"]
+[connection signal="brush_changed" from="View/Brush" to="View/BrushLib" method="brush_changed"]
 [connection signal="pressed" from="View/Tools/Free" to="." method="set_current_tool" binds= [ 0 ]]
 [connection signal="pressed" from="View/Tools/Line" to="." method="set_current_tool" binds= [ 1 ]]
 [connection signal="pressed" from="View/Tools/Strip" to="." method="set_current_tool" binds= [ 2 ]]

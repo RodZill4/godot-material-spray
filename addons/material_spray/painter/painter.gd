@@ -10,9 +10,6 @@ onready var texture_to_view_viewport = $Texture2View
 onready var texture_to_view_mesh = $Texture2View/PaintedMesh
 onready var texture_to_view_mesh_white = $Texture2View/PaintedMeshWhite
 
-onready var texture_to_view_lsb_viewport = $Texture2ViewLsb
-onready var texture_to_view_lsb_mesh = $Texture2ViewLsb/PaintedMesh
-
 onready var seams_viewport = $Seams
 onready var seams_rect = $Seams/SeamsRect
 onready var seams_material = seams_rect.get_material()
@@ -36,16 +33,14 @@ signal painted()
 func _ready():
 	var v2t_tex = view_to_texture_viewport.get_texture()
 	var t2v_tex = texture_to_view_viewport.get_texture()
-	var t2vlsb_tex = texture_to_view_lsb_viewport.get_texture()
 	var seams_tex = seams_viewport.get_texture()
 	# add View2Texture as input of Texture2View (to ignore non-visible parts of the mesh)
 	texture_to_view_mesh.get_surface_material(0).set_shader_param("view2texture", v2t_tex)
-	texture_to_view_lsb_mesh.get_surface_material(0).set_shader_param("view2texture", v2t_tex)
 	# Add Texture2ViewWithoutSeams as input to all painted textures
-	albedo_viewport.set_intermediate_textures(t2v_tex, t2vlsb_tex, seams_tex)
-	mr_viewport.set_intermediate_textures(t2v_tex, t2vlsb_tex, seams_tex)
-	emission_viewport.set_intermediate_textures(t2v_tex, t2vlsb_tex, seams_tex)
-	depth_viewport.set_intermediate_textures(t2v_tex, t2vlsb_tex, seams_tex)
+	albedo_viewport.set_intermediate_textures(t2v_tex, seams_tex)
+	mr_viewport.set_intermediate_textures(t2v_tex, seams_tex)
+	emission_viewport.set_intermediate_textures(t2v_tex, seams_tex)
+	depth_viewport.set_intermediate_textures(t2v_tex, seams_tex)
 	# Add Texture2View as input to seams texture
 	seams_material.set_shader_param("tex", t2v_tex)
 
@@ -65,9 +60,6 @@ func set_mesh(m : Mesh):
 	mat = texture_to_view_mesh_white.get_surface_material(0)
 	texture_to_view_mesh_white.mesh = m
 	texture_to_view_mesh_white.set_surface_material(0, mat)
-	mat = texture_to_view_lsb_mesh.get_surface_material(0)
-	texture_to_view_lsb_mesh.mesh = m
-	texture_to_view_lsb_mesh.set_surface_material(0, mat)
 	mat = view_to_texture_mesh.get_surface_material(0)
 	view_to_texture_mesh.mesh = m
 	view_to_texture_mesh.set_surface_material(0, mat)
@@ -115,7 +107,6 @@ func init_textures(m : SpatialMaterial):
 
 func set_texture_size(s : float):
 	texture_to_view_viewport.size = Vector2(s, s)
-	texture_to_view_lsb_viewport.size = Vector2(s, s)
 	albedo_viewport.set_texture_size(s)
 	mr_viewport.set_texture_size(s)
 	emission_viewport.set_texture_size(s)
@@ -138,15 +129,14 @@ func update_tex2view():
 	view_to_texture_viewport.update_worlds()
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
-	for material in [ texture_to_view_mesh.get_surface_material(0), texture_to_view_lsb_mesh.get_surface_material(0) ]:
-		material.set_shader_param("model_transform", transform)
-		material.set_shader_param("fovy_degrees", camera.fov)
-		material.set_shader_param("z_near", camera.near)
-		material.set_shader_param("z_far", camera.far)
-		material.set_shader_param("aspect", aspect)
-	for viewport in [ texture_to_view_viewport, texture_to_view_lsb_viewport ]:
-		viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-		viewport.update_worlds()
+	var material = texture_to_view_mesh.get_surface_material(0)
+	material.set_shader_param("model_transform", transform)
+	material.set_shader_param("fovy_degrees", camera.fov)
+	material.set_shader_param("z_near", camera.near)
+	material.set_shader_param("z_far", camera.far)
+	material.set_shader_param("aspect", aspect)
+	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	texture_to_view_viewport.update_worlds()
 
 func brush_changed(new_brush):
 	current_brush = new_brush
@@ -238,23 +228,22 @@ func save_viewport(v : Viewport, f : String):
 	v.get_texture().get_data().save_png(f)
 
 func debug_get_texture_names():
-	return [ "View to texture", "Texture to view", "Texture to view (LSB)", "Seams", "Albedo (current layer)", "Metallic/Roughness (current layer)", "Emission (current layer)", "Depth (current layer)" ]
+	return [ "View to texture", "Texture to view", "Seams", "Albedo (current layer)", "Metallic/Roughness (current layer)", "Emission (current layer)", "Depth (current layer)" ]
 
 func debug_get_texture(ID):
-	if ID == 0:
-		return view_to_texture_viewport.get_texture()
-	elif ID == 1:
-		return texture_to_view_viewport.get_texture()
-	elif ID == 2:
-		return texture_to_view_lsb_viewport.get_texture()
-	elif ID == 3:
-		return seams_viewport.get_texture()
-	elif ID == 4:
-		return albedo_viewport.get_texture()
-	elif ID == 5:
-		return mr_viewport.get_texture()
-	elif ID == 6:
-		return emission_viewport.get_texture()
-	elif ID == 7:
-		return depth_viewport.get_texture()
+	match ID:
+		0:
+			return view_to_texture_viewport.get_texture()
+		1:
+			return texture_to_view_viewport.get_texture()
+		2:
+			return seams_viewport.get_texture()
+		3:
+			return albedo_viewport.get_texture()
+		4:
+			return mr_viewport.get_texture()
+		5:
+			return emission_viewport.get_texture()
+		6:
+			return depth_viewport.get_texture()
 	return null
